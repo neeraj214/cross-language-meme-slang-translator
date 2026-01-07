@@ -23,6 +23,8 @@ results/
 # Datasets (keep processed CSVs committed; ignore raw dumps)
 dataset/raw/
 data/
+dataset_export/
+dataset_export.zip
 
 # Caches
 .cache/
