@@ -161,18 +161,16 @@ def summarize_style(style_dict):
 # Load model and tokenizer
 @st.cache_resource
 def load_model(model_id, fallback=FALLBACK_MODEL):
-    try:
-        model = T5ForConditionalGeneration.from_pretrained(model_id)
-        tokenizer = T5TokenizerFast.from_pretrained(model_id)
-        return model, tokenizer, True
-    except Exception:
+    if isinstance(model_id, str) and os.path.isdir(model_id):
         try:
-            model = T5ForConditionalGeneration.from_pretrained(fallback)
-            tokenizer = T5TokenizerFast.from_pretrained(fallback)
-            return model, tokenizer, False
-        except Exception as e:
-            st.error(str(e))
-            raise
+            model = T5ForConditionalGeneration.from_pretrained(model_id)
+            tokenizer = T5TokenizerFast.from_pretrained(model_id)
+            return model, tokenizer, True
+        except Exception:
+            pass
+    model = T5ForConditionalGeneration.from_pretrained(fallback)
+    tokenizer = T5TokenizerFast.from_pretrained(fallback)
+    return model, tokenizer, False
 
 # Translation function
 def translate_text(text, model, tokenizer, max_source_len=MAX_SOURCE_LEN, max_target_len=MAX_TARGET_LEN):
@@ -296,7 +294,7 @@ def main():
             st.subheader("Hinglish Slang/Meme → Standard English")
             hinglish_forward_model, hinglish_forward_tokenizer, is_hinglish_forward_finetuned = load_model(
                 HINGLISH_FORWARD_MODEL_PATH,
-                fallback=FORWARD_MODEL_PATH
+                fallback=FALLBACK_MODEL
             )
             
             source_text = st.text_area(
@@ -325,7 +323,7 @@ def main():
             st.subheader("Standard English → Hinglish Slang/Meme")
             hinglish_reverse_model, hinglish_reverse_tokenizer, is_hinglish_reverse_finetuned = load_model(
                 HINGLISH_REVERSE_MODEL_PATH,
-                fallback=REVERSE_MODEL_PATH
+                fallback=FALLBACK_MODEL
             )
             
             target_text = st.text_area(

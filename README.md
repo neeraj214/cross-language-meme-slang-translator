@@ -45,6 +45,14 @@ Traditional translators (like Google Translate) often fail to capture the nuance
 
 ---
 
+## 🔗 Live App
+
+Streamlit Cloud: https://cross-language-meme-slang-translator-ntuaeasfjtwmonwyttnbtj.streamlit.app/
+
+If you see a “no response” message briefly, wait a moment and refresh; initial cold start may download model weights.
+
+---
+
 ## 🚀 Getting Started
 
 ### Prerequisites
