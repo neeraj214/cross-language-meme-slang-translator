@@ -3,9 +3,12 @@ __pycache__/
 *.pyc
 *.pyo
 *.pyd
+
+# Virtual environments
 .venv/
 env/
 venv/
+.env
 
 # IDE/OS
 .DS_Store
@@ -15,13 +18,19 @@ Thumbs.db
 # Streamlit
 .streamlit/secrets.toml
 
+# Jupyter Notebooks
+.ipynb_checkpoints/
+
 # Large artifacts
 outputs/
 results/
-*.ipynb_checkpoints/
+*.bin
+*.pt
+*.h5
 
 # Datasets (keep processed CSVs committed; ignore raw dumps)
 dataset/raw/
+dataset/raw/*
 data/
 dataset_export/
 dataset_export.zip
