@@ -81,6 +81,20 @@ If you see a “no response” message briefly, wait a moment and refresh; initi
 
 ---
 
+## ⚙️ Configuration
+
+Environment variables can point to hosted model IDs:
+- FORWARD_MODEL_ID
+- REVERSE_MODEL_ID
+- HINGLISH_FORWARD_MODEL_ID
+- HINGLISH_REVERSE_MODEL_ID
+
+Local directories are used when present; otherwise the app falls back to a base T5 model.
+
+On Streamlit Cloud, set these in “Secrets” or environment settings for reliable loading.
+
+---
+
 ## 🐳 Docker Usage
 
 To run the application in an isolated container:

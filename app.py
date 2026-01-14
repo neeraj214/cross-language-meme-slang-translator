@@ -2,6 +2,7 @@ import streamlit as st
 import torch
 from transformers import T5ForConditionalGeneration, T5TokenizerFast
 import os
+import csv
 import json
 import glob
 
@@ -17,6 +18,10 @@ FORWARD_MODEL_PATH = os.environ.get("FORWARD_MODEL", "outputs/checkpoints/t5-sma
 REVERSE_MODEL_PATH = os.environ.get("REVERSE_MODEL", "outputs/checkpoints/t5-small-reverse-ep5-lr3e4-64")
 HINGLISH_FORWARD_MODEL_PATH = os.environ.get("HINGLISH_FORWARD_MODEL", "outputs/checkpoints/t5-small-hinglish-forward-ep10-lr0.0002-64")
 HINGLISH_REVERSE_MODEL_PATH = os.environ.get("HINGLISH_REVERSE_MODEL", "outputs/checkpoints/t5-small-hinglish-reverse-ep10-lr0.0002-64")
+FORWARD_MODEL_ID = os.environ.get("FORWARD_MODEL_ID", None)
+REVERSE_MODEL_ID = os.environ.get("REVERSE_MODEL_ID", None)
+HINGLISH_FORWARD_MODEL_ID = os.environ.get("HINGLISH_FORWARD_MODEL_ID", None)
+HINGLISH_REVERSE_MODEL_ID = os.environ.get("HINGLISH_REVERSE_MODEL_ID", None)
 FALLBACK_MODEL = os.environ.get("FALLBACK_MODEL", "t5-small")
 MAX_SOURCE_LEN = 128
 MAX_TARGET_LEN = 64
@@ -160,11 +165,18 @@ def summarize_style(style_dict):
 
 # Load model and tokenizer
 @st.cache_resource
-def load_model(model_id, fallback=FALLBACK_MODEL):
-    if isinstance(model_id, str) and os.path.isdir(model_id):
+def load_model(local_dir=None, hf_id=None, fallback=FALLBACK_MODEL):
+    if isinstance(local_dir, str) and os.path.isdir(local_dir):
         try:
-            model = T5ForConditionalGeneration.from_pretrained(model_id)
-            tokenizer = T5TokenizerFast.from_pretrained(model_id)
+            model = T5ForConditionalGeneration.from_pretrained(local_dir)
+            tokenizer = T5TokenizerFast.from_pretrained(local_dir)
+            return model, tokenizer, True
+        except Exception:
+            pass
+    if isinstance(hf_id, str) and len(hf_id) > 0:
+        try:
+            model = T5ForConditionalGeneration.from_pretrained(hf_id)
+            tokenizer = T5TokenizerFast.from_pretrained(hf_id)
             return model, tokenizer, True
         except Exception:
             pass
@@ -243,7 +255,17 @@ def main():
         
         with tab1:
             st.subheader("English Slang/Meme → Standard English")
-            forward_model, forward_tokenizer, is_forward_finetuned = load_model(FORWARD_MODEL_PATH)
+            forward_model, forward_tokenizer, is_forward_finetuned = load_model(FORWARD_MODEL_PATH, FORWARD_MODEL_ID)
+            ex_text = ""
+            try:
+                with open(os.path.join("outputs", "data", "test.csv"), newline="", encoding="utf-8") as f:
+                    r = csv.reader(f)
+                    for row in r:
+                        if len(row) >= 3 and row[2].strip().lower() == "english":
+                            ex_text = row[0]
+                            break
+            except Exception:
+                ex_text = ""
             
             source_text = st.text_area(
                 "Enter English slang/meme text:",
@@ -251,6 +273,8 @@ def main():
                 placeholder="Type your English slang or meme text here...",
                 key="english_slang_input"
             )
+            if st.button("Use example", key="english_forward_example") and ex_text:
+                st.session_state["english_slang_input"] = ex_text
             
             if st.button("Translate", key="english_forward_btn"):
                 if source_text:
@@ -266,7 +290,17 @@ def main():
         
         with tab2:
             st.subheader("Standard English → English Slang/Meme")
-            reverse_model, reverse_tokenizer, is_reverse_finetuned = load_model(REVERSE_MODEL_PATH)
+            reverse_model, reverse_tokenizer, is_reverse_finetuned = load_model(REVERSE_MODEL_PATH, REVERSE_MODEL_ID)
+            ex_text_rev = ""
+            try:
+                with open(os.path.join("outputs", "data", "test.csv"), newline="", encoding="utf-8") as f:
+                    r = csv.reader(f)
+                    for row in r:
+                        if len(row) >= 3 and row[2].strip().lower() == "english":
+                            ex_text_rev = row[1]
+                            break
+            except Exception:
+                ex_text_rev = ""
             
             target_text = st.text_area(
                 "Enter standard English text:",
@@ -274,6 +308,8 @@ def main():
                 placeholder="Type your standard English text here...",
                 key="english_input"
             )
+            if st.button("Use example", key="english_reverse_example") and ex_text_rev:
+                st.session_state["english_input"] = ex_text_rev
             
             if st.button("Translate", key="english_reverse_btn"):
                 if target_text:
@@ -294,8 +330,19 @@ def main():
             st.subheader("Hinglish Slang/Meme → Standard English")
             hinglish_forward_model, hinglish_forward_tokenizer, is_hinglish_forward_finetuned = load_model(
                 HINGLISH_FORWARD_MODEL_PATH,
+                HINGLISH_FORWARD_MODEL_ID,
                 fallback=FALLBACK_MODEL
             )
+            ex_hing_fwd = ""
+            try:
+                with open(os.path.join("outputs", "data", "test.csv"), newline="", encoding="utf-8") as f:
+                    r = csv.reader(f)
+                    for row in r:
+                        if len(row) >= 3 and row[2].strip().lower() == "hinglish":
+                            ex_hing_fwd = row[0]
+                            break
+            except Exception:
+                ex_hing_fwd = ""
             
             source_text = st.text_area(
                 "Enter Hinglish slang/meme text:",
@@ -303,6 +350,8 @@ def main():
                 placeholder="Type your Hinglish slang or meme text here...",
                 key="hinglish_slang_input"
             )
+            if st.button("Use example", key="hinglish_forward_example") and ex_hing_fwd:
+                st.session_state["hinglish_slang_input"] = ex_hing_fwd
             
             if st.button("Translate", key="hinglish_forward_btn"):
                 if source_text:
@@ -323,8 +372,19 @@ def main():
             st.subheader("Standard English → Hinglish Slang/Meme")
             hinglish_reverse_model, hinglish_reverse_tokenizer, is_hinglish_reverse_finetuned = load_model(
                 HINGLISH_REVERSE_MODEL_PATH,
+                HINGLISH_REVERSE_MODEL_ID,
                 fallback=FALLBACK_MODEL
             )
+            ex_hing_rev = ""
+            try:
+                with open(os.path.join("outputs", "data", "test.csv"), newline="", encoding="utf-8") as f:
+                    r = csv.reader(f)
+                    for row in r:
+                        if len(row) >= 3 and row[2].strip().lower() == "hinglish":
+                            ex_hing_rev = row[1]
+                            break
+            except Exception:
+                ex_hing_rev = ""
             
             target_text = st.text_area(
                 "Enter standard English text:",
@@ -332,6 +392,8 @@ def main():
                 placeholder="Type your standard English text here...",
                 key="hinglish_input"
             )
+            if st.button("Use example", key="hinglish_reverse_example") and ex_hing_rev:
+                st.session_state["hinglish_input"] = ex_hing_rev
             
             if st.button("Translate", key="hinglish_reverse_btn"):
                 if target_text:
