@@ -22,6 +22,12 @@ FORWARD_MODEL_ID = os.environ.get("FORWARD_MODEL_ID", None)
 REVERSE_MODEL_ID = os.environ.get("REVERSE_MODEL_ID", None)
 HINGLISH_FORWARD_MODEL_ID = os.environ.get("HINGLISH_FORWARD_MODEL_ID", None)
 HINGLISH_REVERSE_MODEL_ID = os.environ.get("HINGLISH_REVERSE_MODEL_ID", None)
+HF_TOKEN = os.environ.get("HF_TOKEN", None)
+try:
+    if not HF_TOKEN:
+        HF_TOKEN = st.secrets.get("HF_TOKEN", None)
+except Exception:
+    HF_TOKEN = HF_TOKEN
 FALLBACK_MODEL = os.environ.get("FALLBACK_MODEL", "t5-small")
 MAX_SOURCE_LEN = 128
 MAX_TARGET_LEN = 64
@@ -175,8 +181,11 @@ def load_model(local_dir=None, hf_id=None, fallback=FALLBACK_MODEL):
             pass
     if isinstance(hf_id, str) and len(hf_id) > 0:
         try:
-            model = T5ForConditionalGeneration.from_pretrained(hf_id)
-            tokenizer = T5TokenizerFast.from_pretrained(hf_id)
+            kw = {}
+            if HF_TOKEN:
+                kw["token"] = HF_TOKEN
+            model = T5ForConditionalGeneration.from_pretrained(hf_id, **kw)
+            tokenizer = T5TokenizerFast.from_pretrained(hf_id, **kw)
             return model, tokenizer, True
         except Exception:
             pass
