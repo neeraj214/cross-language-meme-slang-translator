@@ -84,6 +84,21 @@ def load_metrics():
                             metrics["bleu"][label] = payload
         except Exception:
             continue
+    sacre_paths = [
+        os.path.join("results", "metrics", "sacrebleu_forward.json"),
+        os.path.join("results", "metrics", "sacrebleu_reverse.json"),
+    ]
+    for sp in sacre_paths:
+        try:
+            if os.path.exists(sp):
+                with open(sp, "r", encoding="utf-8") as f:
+                    data = json.load(f)
+                    val = data.get("corpus_bleu")
+                    if isinstance(val, (int, float)):
+                        lbl = "forward_test" if "forward" in os.path.basename(sp) else "reverse_test"
+                        metrics["bleu"][lbl] = {"bleu_score": float(val)}
+        except Exception:
+            pass
 
     # Style metrics
     style_path = os.path.join("results", "metrics", "style_metrics.json")

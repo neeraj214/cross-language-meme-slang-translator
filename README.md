@@ -111,18 +111,19 @@ To run the application in an isolated container:
 
 ---
 
-## � Model Performance
+## 📊 Model Performance
 
-We evaluated the model using **SacreBLEU**, utilizing a multi-reference test set to account for the diversity of valid slang translations.
+We evaluated the model using **SacreBLEU** on the current test sets, accounting for the diversity of valid slang translations.
 
 | Metric | Score | Notes |
 | :--- | :--- | :--- |
-| **Forward BLEU** | **~65.4** | Slang → English |
-| **Reverse BLEU** | **~42.1** | English → Slang (High diversity) |
+| **Forward BLEU** | **16.52** | Slang/Hinglish → Standard English |
+| **Reverse BLEU** | **30.21** | Standard English → Slang (High diversity) |
 
 **Training Strategy:**
 *   **Curriculum Learning:** The model was first trained on "easy" (short) samples before moving to complex, noisy sentences.
-*   **Multi-Reference Evaluation:** Validated against multiple acceptable translations for fairness.
+*   **Multi-Reference Evaluation:** Validated against multiple acceptable translations for fairness (where available).
+*   **Style Metrics (Summary):** Forward outputs show low emoji/slang presence (as expected); reverse outputs show higher slang presence by design.
 
 ---
 
