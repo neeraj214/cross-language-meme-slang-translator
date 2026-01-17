@@ -90,6 +90,25 @@ def sample_grid(forward_path, reverse_path):
     plt.savefig(os.path.join(FIG_DIR, "samples.png"), dpi=200)
     plt.close()
 
+def bleu_forward_variants(std_path, rich_raw_path, rich_norm_path):
+    std = load_json(std_path)
+    raw = load_json(rich_raw_path) if os.path.exists(rich_raw_path) else {"corpus_bleu": None}
+    norm = load_json(rich_norm_path) if os.path.exists(rich_norm_path) else {"corpus_bleu": None}
+    labels = ["Standard Test", "Rich Raw", "Rich Normalized"]
+    scores = [
+        float(std.get("corpus_bleu", 0.0)),
+        float(raw.get("corpus_bleu", 0.0)) if isinstance(raw.get("corpus_bleu"), (int, float)) else 0.0,
+        float(norm.get("corpus_bleu", 0.0)) if isinstance(norm.get("corpus_bleu"), (int, float)) else 0.0,
+    ]
+    plt.figure(figsize=(7, 4))
+    sns.barplot(x=labels, y=scores, palette=["#4c78a8", "#e45756", "#72b7b2"])
+    plt.ylabel("Corpus BLEU")
+    plt.title("Forward BLEU Across Test Formats")
+    plt.xticks(rotation=20)
+    plt.tight_layout()
+    plt.savefig(os.path.join(FIG_DIR, "bleu_forward_variants.png"), dpi=200)
+    plt.close()
+
 def main():
     fwd_json = os.path.join(METRICS_DIR, "sacrebleu_forward.json")
     rev_json = os.path.join(METRICS_DIR, "sacrebleu_reverse.json")
@@ -98,7 +117,12 @@ def main():
     token_dist(fwd_csv)
     error_types(fwd_json)
     sample_grid(fwd_json, rev_json)
-    print({"figures": ["bleu_bar.png", "token_lengths.png", "error_types.png", "samples.png"], "dir": FIG_DIR})
+    bleu_forward_variants(
+        fwd_json,
+        os.path.join(METRICS_DIR, "sacrebleu_forward_rich_raw.json"),
+        os.path.join(METRICS_DIR, "sacrebleu_forward_rich_norm.json"),
+    )
+    print({"figures": ["bleu_bar.png", "token_lengths.png", "error_types.png", "samples.png", "bleu_forward_variants.png"], "dir": FIG_DIR})
 
 if __name__ == "__main__":
     main()
