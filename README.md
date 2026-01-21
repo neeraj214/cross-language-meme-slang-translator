@@ -25,7 +25,7 @@ Traditional translators (like Google Translate) often fail to capture the nuance
     *   **Forward:** Internet Slang / Memes / Hinglish ➡️ Standard English
     *   **Reverse:** Standard English ➡️ Slang / Meme-style text
 *   **🇮🇳 Hinglish Support:** specialized normalization pipeline for handling code-mixed Hindi-English text (e.g., *"kya scene hai bro"*).
-*   **🖥️ Interactive UI:** A clean, real-time web interface built with **Streamlit**.
+*   **🖥️ Interactive UI:** A modern, responsive web interface built with **Streamlit**, featuring custom styling, dark/light mode support, and an intuitive split-view layout.
 *   **🧠 Advanced Training:** Uses **Curriculum Learning** strategies to stabilize training on noisy datasets.
 *   **🐳 Deployment Ready:** Fully Dockerized for easy deployment to cloud platforms like Render, Azure, or AWS.
 
