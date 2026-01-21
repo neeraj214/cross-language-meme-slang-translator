@@ -5,6 +5,7 @@ import os
 import csv
 import json
 import glob
+import random
 
 # Set page configuration
 st.set_page_config(
@@ -13,6 +14,42 @@ st.set_page_config(
     layout="wide",
     initial_sidebar_state="expanded"
 )
+
+# Custom CSS for better UI
+def local_css():
+    st.markdown("""
+        <style>
+        .stTextArea textarea {
+            font-size: 16px !important;
+            border-radius: 8px;
+        }
+        .stButton>button {
+            width: 100%;
+            border-radius: 8px;
+            height: 3em;
+            font-weight: bold;
+        }
+        .reportview-container .main .block-container {
+            padding-top: 2rem;
+        }
+        h1 {
+            color: #4F8BF9;
+            font-weight: 700;
+        }
+        .metric-card {
+            background-color: #f0f2f6;
+            padding: 15px;
+            border-radius: 10px;
+            margin-bottom: 10px;
+            text-align: center;
+        }
+        div[data-testid="stMetricValue"] {
+            font-size: 1.5rem;
+        }
+        </style>
+    """, unsafe_allow_html=True)
+
+local_css()
 
 FORWARD_MODEL_PATH = os.environ.get("FORWARD_MODEL", "outputs/checkpoints/t5-small-forward-ep5-lr3e4-64")
 REVERSE_MODEL_PATH = os.environ.get("REVERSE_MODEL", "outputs/checkpoints/t5-small-reverse-ep5-lr3e4-64")
@@ -229,210 +266,153 @@ def translate_text(text, model, tokenizer, max_source_len=MAX_SOURCE_LEN, max_ta
 
 # App UI
 def main():
-    # Minimal, modern header
-    st.title("Slang/Meme Translator")
-    st.caption("Translate between slang/meme text and standard English or Hinglish.")
+    # Header
+    st.title("🔁 Slang/Meme Translator")
+    st.markdown("### Translate between **Slang/Meme** text and **Standard English** or **Hinglish**.")
+    st.markdown("---")
     
     # Load metrics
     metrics = load_metrics()
     
     # Sidebar with metrics
-    st.sidebar.title("Model Performance")
+    st.sidebar.title("📊 Model Performance")
+    st.sidebar.markdown("---")
+    
     # Pick concise metrics
     f_bleu, r_bleu = pick_bleu_scores(metrics.get("bleu", {}))
     emoji_avg, slang_avg = summarize_style(metrics.get("style", {}))
 
     perf = st.sidebar.container()
-    c1, c2 = perf.columns(2)
+    st.sidebar.subheader("BLEU Scores")
+    c1, c2 = st.sidebar.columns(2)
+    
     # BLEU cards
     if isinstance(f_bleu, (int, float)):
-        c1.metric("Forward BLEU", f"{f_bleu:.2f}")
+        c1.metric("Forward", f"{f_bleu:.2f}")
     else:
-        c1.metric("Forward BLEU", "—")
+        c1.metric("Forward", "—")
     if isinstance(r_bleu, (int, float)):
-        c2.metric("Reverse BLEU", f"{r_bleu:.2f}")
+        c2.metric("Reverse", f"{r_bleu:.2f}")
     else:
-        c2.metric("Reverse BLEU", "—")
+        c2.metric("Reverse", "—")
 
-    c3, c4 = perf.columns(2)
+    st.sidebar.subheader("Style Metrics")
+    c3, c4 = st.sidebar.columns(2)
     # Style cards
     if isinstance(emoji_avg, (int, float)):
-        c3.metric("Emoji Presence", f"{emoji_avg:.2f}")
+        c3.metric("Emoji %", f"{emoji_avg:.2f}")
     else:
-        c3.metric("Emoji Presence", "—")
+        c3.metric("Emoji %", "—")
     if isinstance(slang_avg, (int, float)):
-        c4.metric("Slang Presence", f"{slang_avg:.2f}")
+        c4.metric("Slang %", f"{slang_avg:.2f}")
     else:
-        c4.metric("Slang Presence", "—")
+        c4.metric("Slang %", "—")
+    
+    st.sidebar.markdown("---")
     
     # Language selection
-    # Modernized controls
-    language = st.radio("Language", ["English", "Hinglish"], horizontal=True)
-    st.sidebar.subheader("Controls")
+    st.sidebar.subheader("⚙️ Controls")
+    language = st.sidebar.radio("Target Language Pair", ["English", "Hinglish"])
     use_prefix = st.sidebar.checkbox("Use task prefix", value=APPLY_TASK_PREFIX)
     style = st.sidebar.selectbox("Output style", ["Neutral", "Casual", "Meme-heavy"], index=0)
     
     # Main content
-    # Use tabs to reduce visual clutter
     if language == "English":
-        tab1, tab2 = st.tabs(["Slang → English", "English → Slang"])
+        tab1, tab2 = st.tabs(["🇺🇸 Slang → English", "🇺🇸 English → Slang"])
         
         with tab1:
             st.subheader("English Slang/Meme → Standard English")
-            forward_model, forward_tokenizer, is_forward_finetuned = load_model(FORWARD_MODEL_PATH, FORWARD_MODEL_ID)
-            ex_text = ""
-            try:
-                with open(os.path.join("outputs", "data", "test.csv"), newline="", encoding="utf-8") as f:
-                    r = csv.reader(f)
-                    for row in r:
-                        if len(row) >= 3 and row[2].strip().lower() == "english":
-                            ex_text = row[0]
-                            break
-            except Exception:
-                ex_text = ""
-            
-            source_text = st.text_area(
-                "Enter English slang/meme text:",
-                height=150,
-                placeholder="Type your English slang or meme text here...",
-                key="english_slang_input"
-            )
-            if st.button("Use example", key="english_forward_example") and ex_text:
-                st.session_state["english_slang_input"] = ex_text
-            
-            if st.button("Translate", key="english_forward_btn"):
-                if source_text:
-                    with st.spinner("Translating..."):
-                        src = source_text
-                        if use_prefix:
-                            src = f"{build_prefix('English', 'forward', style)} {src}".strip()
-                        translated = translate_text(src, forward_model, forward_tokenizer)
-                        st.success("Translation complete!")
-                        st.text_area("Translation", translated, height=120)
-                else:
-                    st.warning("Please enter some text to translate")
+            render_translation_ui("English", "forward", FORWARD_MODEL_PATH, FORWARD_MODEL_ID, use_prefix, style)
         
         with tab2:
             st.subheader("Standard English → English Slang/Meme")
-            reverse_model, reverse_tokenizer, is_reverse_finetuned = load_model(REVERSE_MODEL_PATH, REVERSE_MODEL_ID)
-            ex_text_rev = ""
-            try:
-                with open(os.path.join("outputs", "data", "test.csv"), newline="", encoding="utf-8") as f:
-                    r = csv.reader(f)
-                    for row in r:
-                        if len(row) >= 3 and row[2].strip().lower() == "english":
-                            ex_text_rev = row[1]
-                            break
-            except Exception:
-                ex_text_rev = ""
-            
-            target_text = st.text_area(
-                "Enter standard English text:",
-                height=150,
-                placeholder="Type your standard English text here...",
-                key="english_input"
-            )
-            if st.button("Use example", key="english_reverse_example") and ex_text_rev:
-                st.session_state["english_input"] = ex_text_rev
-            
-            if st.button("Translate", key="english_reverse_btn"):
-                if target_text:
-                    with st.spinner("Translating..."):
-                        tgt = target_text
-                        if use_prefix:
-                            tgt = f"{build_prefix('English', 'reverse', style)} {tgt}".strip()
-                        translated = translate_text(tgt, reverse_model, reverse_tokenizer)
-                        st.success("Translation complete!")
-                        st.text_area("Translation", translated, height=120)
-                else:
-                    st.warning("Please enter some text to translate")
+            render_translation_ui("English", "reverse", REVERSE_MODEL_PATH, REVERSE_MODEL_ID, use_prefix, style)
     
     else:  # Hinglish
-        tab1, tab2 = st.tabs(["Hinglish → English", "English → Hinglish"])
+        tab1, tab2 = st.tabs(["🇮🇳 Hinglish → English", "🇮🇳 English → Hinglish"])
         
         with tab1:
             st.subheader("Hinglish Slang/Meme → Standard English")
-            hinglish_forward_model, hinglish_forward_tokenizer, is_hinglish_forward_finetuned = load_model(
-                HINGLISH_FORWARD_MODEL_PATH,
-                HINGLISH_FORWARD_MODEL_ID,
-                fallback=FALLBACK_MODEL
-            )
-            ex_hing_fwd = ""
-            try:
-                with open(os.path.join("outputs", "data", "test.csv"), newline="", encoding="utf-8") as f:
-                    r = csv.reader(f)
-                    for row in r:
-                        if len(row) >= 3 and row[2].strip().lower() == "hinglish":
-                            ex_hing_fwd = row[0]
-                            break
-            except Exception:
-                ex_hing_fwd = ""
-            
-            source_text = st.text_area(
-                "Enter Hinglish slang/meme text:",
-                height=150,
-                placeholder="Type your Hinglish slang or meme text here...",
-                key="hinglish_slang_input"
-            )
-            if st.button("Use example", key="hinglish_forward_example") and ex_hing_fwd:
-                st.session_state["hinglish_slang_input"] = ex_hing_fwd
-            
-            if st.button("Translate", key="hinglish_forward_btn"):
-                if source_text:
-                    with st.spinner("Translating..."):
-                        src = source_text
-                        if use_prefix:
-                            src = f"{build_prefix('Hinglish', 'forward', style)} {src}".strip()
-                        translated = translate_text(src, hinglish_forward_model, hinglish_forward_tokenizer)
-                        st.success("Translation complete!")
-                        st.text_area("Translation", translated, height=120)
-                        
-                        if not is_hinglish_forward_finetuned:
-                            st.info("Note: Using fallback model as Hinglish model is not yet trained. Results may not be optimal for Hinglish text.")
-                else:
-                    st.warning("Please enter some text to translate")
+            render_translation_ui("Hinglish", "forward", HINGLISH_FORWARD_MODEL_PATH, HINGLISH_FORWARD_MODEL_ID, use_prefix, style)
         
         with tab2:
             st.subheader("Standard English → Hinglish Slang/Meme")
-            hinglish_reverse_model, hinglish_reverse_tokenizer, is_hinglish_reverse_finetuned = load_model(
-                HINGLISH_REVERSE_MODEL_PATH,
-                HINGLISH_REVERSE_MODEL_ID,
-                fallback=FALLBACK_MODEL
-            )
-            ex_hing_rev = ""
-            try:
-                with open(os.path.join("outputs", "data", "test.csv"), newline="", encoding="utf-8") as f:
+            render_translation_ui("Hinglish", "reverse", HINGLISH_REVERSE_MODEL_PATH, HINGLISH_REVERSE_MODEL_ID, use_prefix, style)
+
+def render_translation_ui(language, direction, model_path, model_id, use_prefix, style):
+    """Reusable UI component for translation"""
+    
+    # Load model
+    model, tokenizer, is_finetuned = load_model(model_path, model_id, fallback=FALLBACK_MODEL)
+    
+    if not is_finetuned and "Hinglish" in language:
+         st.warning(f"Note: Using fallback model as {language} model is not yet trained/found.")
+
+    # Layout: Input | Output
+    col1, col2 = st.columns([1, 1])
+    
+    with col1:
+        st.markdown("**Input Text**")
+        
+        # Example loader logic
+        example_text = ""
+        try:
+            test_file = os.path.join("outputs", "data", "test.csv")
+            if os.path.exists(test_file):
+                with open(test_file, newline="", encoding="utf-8") as f:
                     r = csv.reader(f)
-                    for row in r:
-                        if len(row) >= 3 and row[2].strip().lower() == "hinglish":
-                            ex_hing_rev = row[1]
-                            break
-            except Exception:
-                ex_hing_rev = ""
+                    rows = list(r)
+                    # Filter relevant rows
+                    relevant_rows = []
+                    for row in rows:
+                        if len(row) >= 3 and row[2].strip().lower() == language.lower():
+                            if direction == "forward":
+                                relevant_rows.append(row[0])
+                            else:
+                                relevant_rows.append(row[1])
+                    
+                    if relevant_rows:
+                        example_text = random.choice(relevant_rows)
+        except Exception:
+            pass
+
+        key_base = f"{language}_{direction}"
+        input_key = f"{key_base}_input"
+        
+        if st.button("🎲 Use Random Example", key=f"{key_base}_ex_btn"):
+            st.session_state[input_key] = example_text
             
-            target_text = st.text_area(
-                "Enter standard English text:",
-                height=150,
-                placeholder="Type your standard English text here...",
-                key="hinglish_input"
-            )
-            if st.button("Use example", key="hinglish_reverse_example") and ex_hing_rev:
-                st.session_state["hinglish_input"] = ex_hing_rev
-            
-            if st.button("Translate", key="hinglish_reverse_btn"):
-                if target_text:
-                    with st.spinner("Translating..."):
-                        tgt = target_text
-                        if use_prefix:
-                            tgt = f"{build_prefix('Hinglish', 'reverse', style)} {tgt}".strip()
-                        translated = translate_text(tgt, hinglish_reverse_model, hinglish_reverse_tokenizer)
-                        st.success("Translation complete!")
-                        st.text_area("Translation", translated, height=120)
-                        
-                        if not is_hinglish_reverse_finetuned:
-                            st.info("Note: Using fallback model as Hinglish model is not yet trained. Results may not be optimal for Hinglish output.")
+        source_text = st.text_area(
+            label="Input",
+            label_visibility="collapsed",
+            height=200,
+            placeholder="Type here...",
+            key=input_key
+        )
+        
+        translate_btn = st.button("🚀 Translate", key=f"{key_base}_run", type="primary")
+
+    with col2:
+        st.markdown("**Translation**")
+        output_placeholder = st.empty()
+        output_placeholder.text_area(label="Output", label_visibility="collapsed", height=200, disabled=True, value="")
+
+        if translate_btn:
+            if source_text:
+                with st.spinner("Translating..."):
+                    src = source_text
+                    if use_prefix:
+                        src = f"{build_prefix(language, direction, style)} {src}".strip()
+                    translated = translate_text(src, model, tokenizer)
+                    output_placeholder.text_area(
+                        label="Output", 
+                        label_visibility="collapsed", 
+                        height=200, 
+                        value=translated
+                    )
+                    st.success("Done!")
             else:
-                st.warning("Please enter some text to translate")
+                st.warning("Please enter some text to translate.")
 
 if __name__ == "__main__":
     main()
