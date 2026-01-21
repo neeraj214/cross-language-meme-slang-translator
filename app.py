@@ -371,7 +371,7 @@ def render_translation_ui(language, direction, model_path, model_id, use_prefix,
         output_placeholder = st.empty()
         
         # Initial empty state
-        output_placeholder.text_area(label="Output", label_visibility="collapsed", height=235, disabled=True, value="")
+        output_placeholder.text_area(label="Output", label_visibility="collapsed", height=235, disabled=True, value="", key=f"{key_base}_output")
 
         if translate_btn:
             if source_text:
@@ -384,7 +384,8 @@ def render_translation_ui(language, direction, model_path, model_id, use_prefix,
                         label="Output", 
                         label_visibility="collapsed", 
                         height=235, 
-                        value=translated
+                        value=translated,
+                        key=f"{key_base}_output_result"
                     )
                     st.toast("Translation completed!", icon="✅")
             else:
