@@ -15,42 +15,142 @@ st.set_page_config(
     initial_sidebar_state="expanded"
 )
 
-# Custom CSS for better UI
+# Custom CSS for Modern Web-App Look
 def local_css():
     st.markdown("""
         <style>
-        .stTextArea textarea {
-            font-size: 16px !important;
-            border-radius: 8px;
+        /* Import Google Font */
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap');
+
+        html, body, [class*="css"] {
+            font-family: 'Inter', sans-serif;
         }
+
+        /* Main Container Styling */
+        .reportview-container {
+            background: #FAFAFA;
+        }
+        
+        /* Sidebar Styling */
+        [data-testid="stSidebar"] {
+            background-color: #ffffff;
+            border-right: 1px solid #f0f0f0;
+        }
+
+        /* Card Styling for Metrics */
+        div[data-testid="metric-container"] {
+            background-color: #ffffff;
+            border: 1px solid #e0e0e0;
+            padding: 15px;
+            border-radius: 12px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.02);
+            transition: all 0.3s ease;
+        }
+        div[data-testid="metric-container"]:hover {
+            box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+            transform: translateY(-2px);
+        }
+        [data-testid="stMetricLabel"] {
+            font-size: 0.9rem;
+            color: #666;
+            font-weight: 600;
+        }
+        [data-testid="stMetricValue"] {
+            font-size: 1.8rem;
+            color: #1a1a1a;
+            font-weight: 700;
+        }
+
+        /* Button Styling */
         .stButton>button {
             width: 100%;
             border-radius: 8px;
-            height: 3em;
-            font-weight: bold;
+            height: 3.2em;
+            font-weight: 600;
+            font-size: 1rem;
+            transition: all 0.2s ease-in-out;
+            border: none;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
         }
-        .reportview-container .main .block-container {
-            padding-top: 2rem;
+        
+        /* Primary Button (Translate) */
+        .stButton>button[kind="primary"] {
+            background: linear-gradient(135deg, #4F8BF9 0%, #2D6CDF 100%);
+            color: white;
         }
+        .stButton>button[kind="primary"]:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(45, 108, 223, 0.3);
+        }
+
+        /* Secondary Button (Example) */
+        .stButton>button[kind="secondary"] {
+            background-color: #f8f9fa;
+            color: #333;
+            border: 1px solid #e0e0e0;
+        }
+        .stButton>button[kind="secondary"]:hover {
+            background-color: #f1f3f5;
+            border-color: #ced4da;
+            color: #000;
+        }
+
+        /* Text Area Styling */
+        .stTextArea textarea {
+            font-size: 16px !important;
+            border-radius: 12px;
+            border: 1px solid #e0e0e0;
+            padding: 15px;
+            background-color: #ffffff;
+            transition: border-color 0.2s;
+            box-shadow: inset 0 2px 4px rgba(0,0,0,0.01);
+        }
+        .stTextArea textarea:focus {
+            border-color: #4F8BF9;
+            box-shadow: 0 0 0 2px rgba(79, 139, 249, 0.2);
+        }
+
+        /* Headers */
         h1 {
-            color: #4F8BF9;
+            color: #1a1a1a;
+            font-weight: 800;
+            letter-spacing: -0.5px;
+        }
+        h2, h3 {
+            color: #333;
             font-weight: 700;
         }
-        .metric-card {
-            background-color: #f0f2f6;
-            padding: 15px;
-            border-radius: 10px;
-            margin-bottom: 10px;
-            text-align: center;
+
+        /* Tab Styling */
+        .stTabs [data-baseweb="tab-list"] {
+            gap: 24px;
         }
-        div[data-testid="stMetricValue"] {
-            font-size: 1.5rem;
+        .stTabs [data-baseweb="tab"] {
+            height: 50px;
+            white-space: pre-wrap;
+            background-color: transparent;
+            border-radius: 4px;
+            color: #666;
+            font-weight: 600;
         }
+        .stTabs [aria-selected="true"] {
+            color: #4F8BF9;
+            border-bottom-color: #4F8BF9;
+        }
+
+        /* Custom Alert/Info Boxes */
+        .stAlert {
+            border-radius: 8px;
+            border: none;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.05);
+        }
+        
         </style>
     """, unsafe_allow_html=True)
 
 local_css()
 
+# --- Configuration & Constants ---
 FORWARD_MODEL_PATH = os.environ.get("FORWARD_MODEL", "outputs/checkpoints/t5-small-forward-ep5-lr3e4-64")
 REVERSE_MODEL_PATH = os.environ.get("REVERSE_MODEL", "outputs/checkpoints/t5-small-reverse-ep5-lr3e4-64")
 HINGLISH_FORWARD_MODEL_PATH = os.environ.get("HINGLISH_FORWARD_MODEL", "outputs/checkpoints/t5-small-hinglish-forward-ep10-lr0.0002-64")
@@ -68,10 +168,10 @@ except Exception:
 FALLBACK_MODEL = os.environ.get("FALLBACK_MODEL", "t5-small")
 MAX_SOURCE_LEN = 128
 MAX_TARGET_LEN = 64
-APPLY_TASK_PREFIX = False  # toggle to prepend task hints at inference
+APPLY_TASK_PREFIX = False 
 
+# --- Helper Functions ---
 def build_prefix(language: str, direction: str, style: str) -> str:
-    # direction: 'forward' (slang->english) or 'reverse' (english->slang)
     style_tag = f" style: {style.lower()}" if style and style.lower() != "neutral" else ""
     if language == "Hinglish":
         if direction == "forward":
@@ -84,21 +184,8 @@ def build_prefix(language: str, direction: str, style: str) -> str:
         else:
             return f"translate english to slang:{style_tag}".strip()
 
-# Load metrics if available
 def load_metrics():
-    """Load BLEU and style metrics from results/metrics with robust fallbacks.
-
-    BLEU: merges entries from any JSON containing a top-level object with
-    keys that include 'bleu_score'. Supports files like:
-    - hinglish_bleu.json
-    - forward_bleu.json / reverse_bleu.json
-    - t5_small_bleu.json
-
-    Style: reads style_metrics.json when present.
-    """
     metrics = {"bleu": {}, "style": {}}
-
-    # Aggregate BLEU from all matching files
     bleu_files = [
         "results/metrics/t5_small_bleu.json",
         "results/metrics/hinglish_bleu.json",
@@ -107,10 +194,7 @@ def load_metrics():
         "results/metrics/hinglish_forward_bleu.json",
         "results/metrics/hinglish_reverse_bleu.json",
     ]
-
-    # Also pick up any other *_bleu.json files
     bleu_files.extend(glob.glob(os.path.join("results", "metrics", "*bleu*.json")))
-
     for bf in bleu_files:
         try:
             with open(bf, "r", encoding="utf-8") as f:
@@ -136,8 +220,6 @@ def load_metrics():
                         metrics["bleu"][lbl] = {"bleu_score": float(val)}
         except Exception:
             pass
-
-    # Style metrics
     style_path = os.path.join("results", "metrics", "style_metrics.json")
     if os.path.exists(style_path):
         try:
@@ -145,42 +227,19 @@ def load_metrics():
                 metrics["style"] = json.load(f)
         except Exception:
             metrics["style"] = {}
-
     return metrics
 
-
 def pick_bleu_scores(bleu_dict):
-    """Select concise BLEU metrics for display: Forward and Reverse.
-
-    Priority order prefers test metrics, then validation, then generic labels.
-    Returns (forward_bleu, reverse_bleu) or (None, None) when unavailable.
-    """
     if not isinstance(bleu_dict, dict):
         return None, None
-
     def score(lbl):
         payload = bleu_dict.get(lbl)
         if isinstance(payload, dict):
             val = payload.get("bleu_score")
             return val if isinstance(val, (int, float)) else None
         return None
-
-    forward_labels = [
-        "forward_test",
-        "hinglish_forward_test",
-        "forward",
-        "hinglish_forward_val",
-        "forward_val",
-    ]
-    reverse_labels = [
-        "reverse_test",
-        "hinglish_reverse_test",
-        "reverse",
-        "hinglish_reverse_val",
-        "reverse_val",
-        "reverse_val_baseline",
-    ]
-
+    forward_labels = ["forward_test", "hinglish_forward_test", "forward", "hinglish_forward_val", "forward_val"]
+    reverse_labels = ["reverse_test", "hinglish_reverse_test", "reverse", "hinglish_reverse_val", "reverse_val", "reverse_val_baseline"]
     f_bleu = None
     r_bleu = None
     for lbl in forward_labels:
@@ -195,16 +254,9 @@ def pick_bleu_scores(bleu_dict):
             break
     return f_bleu, r_bleu
 
-
 def summarize_style(style_dict):
-    """Summarize style metrics to key values: emoji_presence and slang_presence.
-
-    If multiple labels exist, compute simple averages over available numeric fields.
-    Returns (emoji_presence, slang_presence) which may be None when missing.
-    """
     if not isinstance(style_dict, dict) or not style_dict:
         return None, None
-
     emojis = []
     slangs = []
     for _label, data in style_dict.items():
@@ -216,12 +268,10 @@ def summarize_style(style_dict):
             emojis.append(e)
         if isinstance(s, (int, float)):
             slangs.append(s)
-
     emoji_avg = sum(emojis) / len(emojis) if emojis else None
     slang_avg = sum(slangs) / len(slangs) if slangs else None
     return emoji_avg, slang_avg
 
-# Load model and tokenizer
 @st.cache_resource
 def load_model(local_dir=None, hf_id=None, fallback=FALLBACK_MODEL):
     if isinstance(local_dir, str) and os.path.isdir(local_dir):
@@ -245,11 +295,9 @@ def load_model(local_dir=None, hf_id=None, fallback=FALLBACK_MODEL):
     tokenizer = T5TokenizerFast.from_pretrained(fallback)
     return model, tokenizer, False
 
-# Translation function
 def translate_text(text, model, tokenizer, max_source_len=MAX_SOURCE_LEN, max_target_len=MAX_TARGET_LEN):
     inputs = tokenizer(text, return_tensors="pt", max_length=max_source_len, padding="max_length", truncation=True)
     input_ids = inputs.input_ids.to(model.device)
-    
     with torch.no_grad():
         outputs = model.generate(
             input_ids,
@@ -260,101 +308,22 @@ def translate_text(text, model, tokenizer, max_source_len=MAX_SOURCE_LEN, max_ta
             early_stopping=True,
             do_sample=False
         )
-    
     translated_text = tokenizer.decode(outputs[0], skip_special_tokens=True)
     return translated_text
 
-# App UI
-def main():
-    # Header
-    st.title("🔁 Slang/Meme Translator")
-    st.markdown("### Translate between **Slang/Meme** text and **Standard English** or **Hinglish**.")
-    st.markdown("---")
-    
-    # Load metrics
-    metrics = load_metrics()
-    
-    # Sidebar with metrics
-    st.sidebar.title("📊 Model Performance")
-    st.sidebar.markdown("---")
-    
-    # Pick concise metrics
-    f_bleu, r_bleu = pick_bleu_scores(metrics.get("bleu", {}))
-    emoji_avg, slang_avg = summarize_style(metrics.get("style", {}))
-
-    perf = st.sidebar.container()
-    st.sidebar.subheader("BLEU Scores")
-    c1, c2 = st.sidebar.columns(2)
-    
-    # BLEU cards
-    if isinstance(f_bleu, (int, float)):
-        c1.metric("Forward", f"{f_bleu:.2f}")
-    else:
-        c1.metric("Forward", "—")
-    if isinstance(r_bleu, (int, float)):
-        c2.metric("Reverse", f"{r_bleu:.2f}")
-    else:
-        c2.metric("Reverse", "—")
-
-    st.sidebar.subheader("Style Metrics")
-    c3, c4 = st.sidebar.columns(2)
-    # Style cards
-    if isinstance(emoji_avg, (int, float)):
-        c3.metric("Emoji %", f"{emoji_avg:.2f}")
-    else:
-        c3.metric("Emoji %", "—")
-    if isinstance(slang_avg, (int, float)):
-        c4.metric("Slang %", f"{slang_avg:.2f}")
-    else:
-        c4.metric("Slang %", "—")
-    
-    st.sidebar.markdown("---")
-    
-    # Language selection
-    st.sidebar.subheader("⚙️ Controls")
-    language = st.sidebar.radio("Target Language Pair", ["English", "Hinglish"])
-    use_prefix = st.sidebar.checkbox("Use task prefix", value=APPLY_TASK_PREFIX)
-    style = st.sidebar.selectbox("Output style", ["Neutral", "Casual", "Meme-heavy"], index=0)
-    
-    # Main content
-    if language == "English":
-        tab1, tab2 = st.tabs(["🇺🇸 Slang → English", "🇺🇸 English → Slang"])
-        
-        with tab1:
-            st.subheader("English Slang/Meme → Standard English")
-            render_translation_ui("English", "forward", FORWARD_MODEL_PATH, FORWARD_MODEL_ID, use_prefix, style)
-        
-        with tab2:
-            st.subheader("Standard English → English Slang/Meme")
-            render_translation_ui("English", "reverse", REVERSE_MODEL_PATH, REVERSE_MODEL_ID, use_prefix, style)
-    
-    else:  # Hinglish
-        tab1, tab2 = st.tabs(["🇮🇳 Hinglish → English", "🇮🇳 English → Hinglish"])
-        
-        with tab1:
-            st.subheader("Hinglish Slang/Meme → Standard English")
-            render_translation_ui("Hinglish", "forward", HINGLISH_FORWARD_MODEL_PATH, HINGLISH_FORWARD_MODEL_ID, use_prefix, style)
-        
-        with tab2:
-            st.subheader("Standard English → Hinglish Slang/Meme")
-            render_translation_ui("Hinglish", "reverse", HINGLISH_REVERSE_MODEL_PATH, HINGLISH_REVERSE_MODEL_ID, use_prefix, style)
-
+# --- UI Component ---
 def render_translation_ui(language, direction, model_path, model_id, use_prefix, style):
-    """Reusable UI component for translation"""
-    
-    # Load model
     model, tokenizer, is_finetuned = load_model(model_path, model_id, fallback=FALLBACK_MODEL)
     
     if not is_finetuned and "Hinglish" in language:
-         st.warning(f"Note: Using fallback model as {language} model is not yet trained/found.")
+         st.warning(f"⚠️ Using fallback model. Specific {language} model not found.")
 
-    # Layout: Input | Output
-    col1, col2 = st.columns([1, 1])
+    col1, col2 = st.columns([1, 1], gap="large")
     
     with col1:
-        st.markdown("**Input Text**")
+        st.markdown("### 📥 Input")
         
-        # Example loader logic
+        # Load example text
         example_text = ""
         try:
             test_file = os.path.join("outputs", "data", "test.csv")
@@ -362,7 +331,6 @@ def render_translation_ui(language, direction, model_path, model_id, use_prefix,
                 with open(test_file, newline="", encoding="utf-8") as f:
                     r = csv.reader(f)
                     rows = list(r)
-                    # Filter relevant rows
                     relevant_rows = []
                     for row in rows:
                         if len(row) >= 3 and row[2].strip().lower() == language.lower():
@@ -370,7 +338,6 @@ def render_translation_ui(language, direction, model_path, model_id, use_prefix,
                                 relevant_rows.append(row[0])
                             else:
                                 relevant_rows.append(row[1])
-                    
                     if relevant_rows:
                         example_text = random.choice(relevant_rows)
         except Exception:
@@ -379,27 +346,36 @@ def render_translation_ui(language, direction, model_path, model_id, use_prefix,
         key_base = f"{language}_{direction}"
         input_key = f"{key_base}_input"
         
-        if st.button("🎲 Use Random Example", key=f"{key_base}_ex_btn"):
-            st.session_state[input_key] = example_text
+        # Toolbar for input
+        ic1, ic2 = st.columns([1, 1])
+        with ic1:
+             st.caption("Enter text below:")
+        with ic2:
+            if st.button("🎲 Random Example", key=f"{key_base}_ex_btn", help="Load a random example from test set"):
+                st.session_state[input_key] = example_text
             
         source_text = st.text_area(
             label="Input",
             label_visibility="collapsed",
-            height=200,
-            placeholder="Type here...",
+            height=180,
+            placeholder="Type your text here...",
             key=input_key
         )
         
-        translate_btn = st.button("🚀 Translate", key=f"{key_base}_run", type="primary")
+        st.markdown("<div style='margin-top: 10px;'></div>", unsafe_allow_html=True)
+        translate_btn = st.button("⚡ Translate", key=f"{key_base}_run", type="primary")
 
     with col2:
-        st.markdown("**Translation**")
+        st.markdown("### 📤 Output")
+        st.caption("Translation result:")
         output_placeholder = st.empty()
-        output_placeholder.text_area(label="Output", label_visibility="collapsed", height=200, disabled=True, value="")
+        
+        # Initial empty state
+        output_placeholder.text_area(label="Output", label_visibility="collapsed", height=235, disabled=True, value="")
 
         if translate_btn:
             if source_text:
-                with st.spinner("Translating..."):
+                with st.spinner("Processing..."):
                     src = source_text
                     if use_prefix:
                         src = f"{build_prefix(language, direction, style)} {src}".strip()
@@ -407,12 +383,99 @@ def render_translation_ui(language, direction, model_path, model_id, use_prefix,
                     output_placeholder.text_area(
                         label="Output", 
                         label_visibility="collapsed", 
-                        height=200, 
+                        height=235, 
                         value=translated
                     )
-                    st.success("Done!")
+                    st.toast("Translation completed!", icon="✅")
             else:
                 st.warning("Please enter some text to translate.")
+
+# --- Main App ---
+def main():
+    # Sidebar: Metrics & Config
+    st.sidebar.title("🛠️ Config")
+    
+    # 1. Controls
+    st.sidebar.subheader("Settings")
+    
+    # Language Selection (Visual Switch)
+    st.sidebar.markdown("**Language Pair**")
+    language = st.sidebar.radio("Target Language Pair", ["English", "Hinglish"], label_visibility="collapsed")
+    
+    # Style & Prefix
+    st.sidebar.markdown("**Translation Style**")
+    style = st.sidebar.selectbox("Style", ["Neutral", "Casual", "Meme-heavy"], index=0, label_visibility="collapsed")
+    use_prefix = st.sidebar.checkbox("Use Task Prefix", value=APPLY_TASK_PREFIX, help="Prepend task instructions to input")
+    
+    st.sidebar.markdown("---")
+    
+    # 2. Metrics Dashboard in Sidebar
+    st.sidebar.title("📊 Metrics")
+    metrics = load_metrics()
+    f_bleu, r_bleu = pick_bleu_scores(metrics.get("bleu", {}))
+    emoji_avg, slang_avg = summarize_style(metrics.get("style", {}))
+    
+    # Custom Card HTML for Sidebar
+    def metric_card(label, value, icon=""):
+        st.sidebar.markdown(f"""
+        <div style="background: white; padding: 10px; border-radius: 8px; border: 1px solid #e0e0e0; margin-bottom: 8px;">
+            <div style="font-size: 0.8rem; color: #666;">{icon} {label}</div>
+            <div style="font-size: 1.2rem; font-weight: 700; color: #333;">{value}</div>
+        </div>
+        """, unsafe_allow_html=True)
+
+    st.sidebar.caption("BLEU Scores (Accuracy)")
+    col_a, col_b = st.sidebar.columns(2)
+    with col_a:
+        val = f"{f_bleu:.2f}" if isinstance(f_bleu, (int, float)) else "—"
+        metric_card("Forward", val, "➡️")
+    with col_b:
+        val = f"{r_bleu:.2f}" if isinstance(r_bleu, (int, float)) else "—"
+        metric_card("Reverse", val, "⬅️")
+
+    st.sidebar.caption("Style Analysis")
+    col_c, col_d = st.sidebar.columns(2)
+    with col_c:
+        val = f"{emoji_avg:.2f}" if isinstance(emoji_avg, (int, float)) else "—"
+        metric_card("Emoji %", val, "😀")
+    with col_d:
+        val = f"{slang_avg:.2f}" if isinstance(slang_avg, (int, float)) else "—"
+        metric_card("Slang %", val, "💬")
+
+    # Main Content Area
+    st.title("🔁 Slang/Meme Translator")
+    st.markdown(
+        """
+        <div style='background-color: #E8F0FE; padding: 15px; border-radius: 8px; border-left: 5px solid #4F8BF9; margin-bottom: 25px;'>
+            <p style='margin: 0; color: #1a1a1a;'>
+                <strong>Welcome!</strong> Translate between <em>internet slang/memes</em> and standard language. 
+                Select <strong>English</strong> or <strong>Hinglish</strong> from the sidebar to get started.
+            </p>
+        </div>
+        """, 
+        unsafe_allow_html=True
+    )
+    
+    if language == "English":
+        tab1, tab2 = st.tabs(["🇺🇸 Slang ➡️ English", "🇺🇸 English ➡️ Slang"])
+        with tab1:
+            render_translation_ui("English", "forward", FORWARD_MODEL_PATH, FORWARD_MODEL_ID, use_prefix, style)
+        with tab2:
+            render_translation_ui("English", "reverse", REVERSE_MODEL_PATH, REVERSE_MODEL_ID, use_prefix, style)
+    
+    else:  # Hinglish
+        tab1, tab2 = st.tabs(["🇮🇳 Hinglish ➡️ English", "🇮🇳 English ➡️ Hinglish"])
+        with tab1:
+            render_translation_ui("Hinglish", "forward", HINGLISH_FORWARD_MODEL_PATH, HINGLISH_FORWARD_MODEL_ID, use_prefix, style)
+        with tab2:
+            render_translation_ui("Hinglish", "reverse", HINGLISH_REVERSE_MODEL_PATH, HINGLISH_REVERSE_MODEL_ID, use_prefix, style)
+
+    # Footer
+    st.markdown("---")
+    st.markdown(
+        "<div style='text-align: center; color: #888; font-size: 0.8rem;'>Built with ❤️ using T5 & Streamlit</div>", 
+        unsafe_allow_html=True
+    )
 
 if __name__ == "__main__":
     main()
