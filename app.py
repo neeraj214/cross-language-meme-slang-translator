@@ -393,22 +393,36 @@ def render_translation_ui(language, direction, model_path, model_id, use_prefix,
 
 # --- Main App ---
 def main():
-    # Sidebar: Metrics & Config
+    # Sidebar: Modern Config Panel (card-based layout for clarity and hierarchy)
     st.sidebar.title("🛠️ Config")
-    
-    # 1. Controls
-    st.sidebar.subheader("Settings")
-    
-    # Language Selection (Visual Switch)
-    st.sidebar.markdown("**Language Pair**")
-    language = st.sidebar.radio("Target Language Pair", ["English", "Hinglish"], label_visibility="collapsed")
-    
-    # Style & Prefix
-    st.sidebar.markdown("**Translation Style**")
-    style = st.sidebar.selectbox("Style", ["Neutral", "Casual", "Meme-heavy"], index=0, label_visibility="collapsed")
-    use_prefix = st.sidebar.checkbox("Use Task Prefix", value=APPLY_TASK_PREFIX, help="Prepend task instructions to input")
-    
-    st.sidebar.markdown("---")
+    st.sidebar.markdown(
+        "<div style='background: #ffffff; border: 1px solid #e5e7eb; border-radius: 12px; padding: 14px; box-shadow: 0 2px 8px rgba(0,0,0,0.04);'>"
+        "<div style='font-weight:700; color:#111827; margin-bottom:8px;'>Configuration</div>"
+        "<div style='color:#6b7280; font-size:0.9rem; margin-bottom:12px;'>Set your language pair and translation style. These preferences guide how outputs are generated.</div>",
+        unsafe_allow_html=True
+    )
+    language = st.sidebar.radio(
+        "Language Pair",
+        ["English", "Hinglish"],
+        help="Choose between English-only translations or English↔Hinglish code-mixed translations."
+    )
+    style = st.sidebar.selectbox(
+        "Translation Style",
+        ["Neutral", "Casual", "Meme-heavy"],
+        index=0,
+        help="Neutral keeps tone formal; Casual adds informality; Meme-heavy preserves meme/slang context."
+    )
+    use_prefix = st.sidebar.checkbox(
+        "Use Task Prefix",
+        value=APPLY_TASK_PREFIX,
+        help="Adds an instruction prefix to the model input for more consistent outputs."
+    )
+    st.sidebar.markdown(
+        "<div style='border-top:1px dashed #e5e7eb; margin:12px 0;'></div>"
+        "<div style='color:#6b7280; font-size:0.85rem;'>Tip: Switch language pairs via tabs in the main area for faster workflow.</div>"
+        "</div>",
+        unsafe_allow_html=True
+    )
     
     # 2. Metrics Dashboard in Sidebar
     st.sidebar.title("📊 Metrics")
