@@ -436,8 +436,9 @@ def main():
     
     # Custom Card HTML for Sidebar
     def metric_card(label, value, icon=""):
+        tooltip = "BLEU measures similarity to reference translations; higher is better."
         st.sidebar.markdown(f"""
-        <div style="background: white; padding: 10px; border-radius: 8px; border: 1px solid #e0e0e0; margin-bottom: 8px;">
+        <div style="background: white; padding: 10px; border-radius: 8px; border: 1px solid #e0e0e0; margin-bottom: 8px;" title="{tooltip}">
             <div style="font-size: 0.8rem; color: #666;">{icon} {label}</div>
             <div style="font-size: 1.2rem; font-weight: 700; color: #333;">{value}</div>
         </div>
