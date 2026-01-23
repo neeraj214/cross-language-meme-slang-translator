@@ -461,13 +461,16 @@ def main():
     st.title("🔁 Slang/Meme Translator")
     st.markdown(
         """
-        <div style='background-color: #E8F0FE; padding: 15px; border-radius: 8px; border-left: 5px solid #4F8BF9; margin-bottom: 25px;'>
-            <p style='margin: 0; color: #1a1a1a;'>
-                <strong>Welcome!</strong> Translate between <em>internet slang/memes</em> and standard language. 
-                Select <strong>English</strong> or <strong>Hinglish</strong> from the sidebar to get started.
-            </p>
-        </div>
-        """, 
+        <section style="background: linear-gradient(135deg, #F7F9FC 0%, #EEF2F7 100%); padding: 18px; border-radius: 14px; border: 1px solid #e5e7eb; margin-bottom: 24px;">
+            <div style="display:flex; align-items:center; gap:12px;">
+                <div style="background:#4F8BF9; color:white; width:36px; height:36px; display:flex; align-items:center; justify-content:center; border-radius:10px; font-weight:700;">AI</div>
+                <div>
+                    <h2 style="margin:0; color:#111827; font-size:1.25rem; font-weight:800; letter-spacing:-0.2px;">Translate internet slang and memes into formal language using NLP</h2>
+                    <p style="margin:4px 0 0; color:#6b7280; font-size:0.95rem;">Choose your language pair and style, then paste or select an example to translate.</p>
+                </div>
+            </div>
+        </section>
+        """,
         unsafe_allow_html=True
     )
     
