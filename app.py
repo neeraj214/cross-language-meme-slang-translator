@@ -27,9 +27,7 @@ def local_css():
         }
 
         /* Main Container Styling */
-        .reportview-container {
-            background: #FAFAFA;
-        }
+        .reportview-container { background: #F7F9FC; }
         
         /* Sidebar Styling */
         [data-testid="stSidebar"] {
@@ -143,6 +141,20 @@ def local_css():
             border-radius: 8px;
             border: none;
             box-shadow: 0 2px 6px rgba(0,0,0,0.05);
+        }
+        
+        /* Skeleton Loader */
+        .skeleton {
+            height: 200px;
+            border-radius: 12px;
+            background: linear-gradient(90deg, #f2f4f7 25%, #eaeef3 37%, #f2f4f7 63%);
+            background-size: 400% 100%;
+            animation: shimmer 1.4s ease-in-out infinite;
+            border: 1px solid #e5e7eb;
+        }
+        @keyframes shimmer {
+          0% { background-position: 100% 0; }
+          100% { background-position: -100% 0; }
         }
         
         </style>
@@ -378,6 +390,7 @@ def render_translation_ui(language, direction, model_path, model_id, use_prefix,
 
         if translate_btn:
             if source_text:
+                output_placeholder.markdown("<div class='skeleton'></div>", unsafe_allow_html=True)
                 with st.spinner("Translating…"):
                     src = source_text
                     if use_prefix:
