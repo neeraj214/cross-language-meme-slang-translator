@@ -322,6 +322,7 @@ def render_translation_ui(language, direction, model_path, model_id, use_prefix,
     
     with col1:
         st.markdown("### 📥 Input")
+        st.markdown("<div style='background:#ffffff; border:1px solid #e5e7eb; border-radius:12px; padding:12px; box-shadow:0 2px 8px rgba(0,0,0,0.04);'>", unsafe_allow_html=True)
         
         # Load example text
         example_text = ""
@@ -364,9 +365,11 @@ def render_translation_ui(language, direction, model_path, model_id, use_prefix,
         
         st.markdown("<div style='margin-top: 10px;'></div>", unsafe_allow_html=True)
         translate_btn = st.button("⚡ Translate", key=f"{key_base}_run", type="primary")
+        st.markdown("</div>", unsafe_allow_html=True)
 
     with col2:
         st.markdown("### 📤 Output")
+        st.markdown("<div style='background:#ffffff; border:1px solid #e5e7eb; border-radius:12px; padding:12px; box-shadow:0 2px 8px rgba(0,0,0,0.04);'>", unsafe_allow_html=True)
         st.caption("Translation result:")
         output_placeholder = st.empty()
         
@@ -388,6 +391,7 @@ def render_translation_ui(language, direction, model_path, model_id, use_prefix,
                         key=f"{key_base}_output_result"
                     )
                     st.toast("Translation completed!", icon="✅")
+        st.markdown("</div>", unsafe_allow_html=True)
             else:
                 st.warning("Please enter some text to translate.")
 
