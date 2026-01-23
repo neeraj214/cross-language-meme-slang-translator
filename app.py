@@ -378,7 +378,7 @@ def render_translation_ui(language, direction, model_path, model_id, use_prefix,
 
         if translate_btn:
             if source_text:
-                with st.spinner("Processing..."):
+                with st.spinner("Translating…"):
                     src = source_text
                     if use_prefix:
                         src = f"{build_prefix(language, direction, style)} {src}".strip()
