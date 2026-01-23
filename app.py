@@ -404,9 +404,9 @@ def render_translation_ui(language, direction, model_path, model_id, use_prefix,
                         key=f"{key_base}_output_result"
                     )
                     st.toast("Translation completed!", icon="✅")
-        st.markdown("</div>", unsafe_allow_html=True)
             else:
                 st.warning("Please enter some text to translate.")
+        st.markdown("</div>", unsafe_allow_html=True)
 
 # --- Main App ---
 def main():
