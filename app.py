@@ -63,7 +63,7 @@ def local_css():
         .stButton>button {
             width: 100%;
             border-radius: 8px;
-            height: 3.2em;
+            height: 3.6em;
             font-weight: 600;
             font-size: 1rem;
             transition: all 0.2s ease-in-out;
@@ -79,6 +79,11 @@ def local_css():
         .stButton>button[kind="primary"]:hover {
             transform: translateY(-1px);
             box-shadow: 0 4px 12px rgba(79, 70, 229, 0.35);
+        }
+        .cta-disabled .stButton>button {
+            opacity: 0.55;
+            cursor: not-allowed;
+            box-shadow: none;
         }
 
         /* Secondary Button (Example) */
@@ -379,7 +384,12 @@ def render_translation_ui(language, direction, model_path, model_id, use_prefix,
         )
         
         st.markdown("<div style='margin-top: 10px;'></div>", unsafe_allow_html=True)
-        translate_btn = st.button("⚡ Translate", key=f"{key_base}_run", type="primary")
+        if not source_text or not source_text.strip():
+            st.markdown("<div class='cta-disabled'>", unsafe_allow_html=True)
+            translate_btn = st.button("⚡ Translate", key=f"{key_base}_run", type="primary", help="Enter text to enable")
+            st.markdown("</div>", unsafe_allow_html=True)
+        else:
+            translate_btn = st.button("⚡ Translate", key=f"{key_base}_run", type="primary")
         st.markdown("</div>", unsafe_allow_html=True)
 
     with col2:
