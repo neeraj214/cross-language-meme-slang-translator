@@ -107,6 +107,9 @@ def local_css():
             border-color: #4F46E5;
             box-shadow: 0 0 0 2px rgba(79, 70, 229, 0.2);
         }
+        .stTextArea textarea::placeholder {
+            color: #9CA3AF;
+        }
 
         /* Headers */
         h1 {
@@ -369,9 +372,9 @@ def render_translation_ui(language, direction, model_path, model_id, use_prefix,
             
         source_text = st.text_area(
             label="Input",
-            label_visibility="collapsed",
-            height=180,
-            placeholder="Type your text here...",
+            label_visibility="visible",
+            height=240,
+            placeholder="Type your text here… (slang, memes, Hinglish)",
             key=input_key
         )
         
