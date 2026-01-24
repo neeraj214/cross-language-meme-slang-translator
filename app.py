@@ -73,12 +73,12 @@ def local_css():
         
         /* Primary Button (Translate) */
         .stButton>button[kind="primary"] {
-            background: linear-gradient(135deg, #4F8BF9 0%, #2D6CDF 100%);
+            background: linear-gradient(135deg, #4F46E5 0%, #6366F1 100%);
             color: white;
         }
         .stButton>button[kind="primary"]:hover {
             transform: translateY(-1px);
-            box-shadow: 0 4px 12px rgba(45, 108, 223, 0.3);
+            box-shadow: 0 4px 12px rgba(79, 70, 229, 0.35);
         }
 
         /* Secondary Button (Example) */
@@ -104,8 +104,8 @@ def local_css():
             box-shadow: inset 0 2px 4px rgba(0,0,0,0.01);
         }
         .stTextArea textarea:focus {
-            border-color: #4F8BF9;
-            box-shadow: 0 0 0 2px rgba(79, 139, 249, 0.2);
+            border-color: #4F46E5;
+            box-shadow: 0 0 0 2px rgba(79, 70, 229, 0.2);
         }
 
         /* Headers */
@@ -132,8 +132,8 @@ def local_css():
             font-weight: 600;
         }
         .stTabs [aria-selected="true"] {
-            color: #4F8BF9;
-            border-bottom-color: #4F8BF9;
+            color: #4F46E5;
+            border-bottom-color: #4F46E5;
         }
 
         /* Custom Alert/Info Boxes */
@@ -476,15 +476,14 @@ def main():
         metric_card("Slang %", val, "💬")
 
     # Main Content Area
-    st.title("🔁 Slang/Meme Translator")
     st.markdown(
         """
-        <section style="background: linear-gradient(135deg, #F7F9FC 0%, #EEF2F7 100%); padding: 18px; border-radius: 14px; border: 1px solid #e5e7eb; margin-bottom: 24px;">
-            <div style="display:flex; align-items:center; gap:12px;">
-                <div style="background:#4F8BF9; color:white; width:36px; height:36px; display:flex; align-items:center; justify-content:center; border-radius:10px; font-weight:700;">AI</div>
+        <section style="background: linear-gradient(135deg, #F8FAFC 0%, #EEF2F7 100%); padding: 24px; border-radius: 16px; border: 1px solid #e5e7eb; margin: 8px 0 24px;">
+            <div style="display:flex; align-items:center; gap:14px;">
+                <div style="background: linear-gradient(135deg, #4F46E5 0%, #6366F1 100%); color:white; width:40px; height:40px; display:flex; align-items:center; justify-content:center; border-radius:12px; font-weight:800; box-shadow: 0 6px 16px rgba(79,70,229,0.25);">AI</div>
                 <div>
-                    <h2 style="margin:0; color:#111827; font-size:1.25rem; font-weight:800; letter-spacing:-0.2px;">Translate internet slang and memes into formal language using NLP</h2>
-                    <p style="margin:4px 0 0; color:#6b7280; font-size:0.95rem;">Choose your language pair and style, then paste or select an example to translate.</p>
+                    <h1 style="margin:0; color:#111827; font-size:2.1rem; font-weight:800; letter-spacing:-0.02em;">🔁 Slang/Meme Translator</h1>
+                    <p style="margin:6px 0 0; color:#6b7280; font-size:1rem;">Translate internet slang, memes, and Hinglish with controllable tone and clear outputs.</p>
                 </div>
             </div>
         </section>
