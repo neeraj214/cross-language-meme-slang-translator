@@ -6,8 +6,8 @@ enableCORS = false
 
 [theme]
 base = "light"
-primaryColor = "#4F8BF9"
-backgroundColor = "#F7F9FC"
+primaryColor = "#6366F1"
+backgroundColor = "#F8FAFC"
 secondaryBackgroundColor = "#EEF2F7"
-textColor = "#1A1A1A"
+textColor = "#334155"
 font = "sans serif"
