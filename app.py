@@ -55,8 +55,8 @@ def local_css():
         }
         [data-testid="stMetricValue"] {
             font-size: 1.8rem;
-            color: #1a1a1a;
-            font-weight: 700;
+            color: #10B981;
+            font-weight: 800;
         }
 
         /* Button Styling */
@@ -464,9 +464,11 @@ def main():
     def metric_card(label, value, icon=""):
         tooltip = "BLEU measures similarity to reference translations; higher is better."
         st.sidebar.markdown(f"""
-        <div style="background: white; padding: 10px; border-radius: 8px; border: 1px solid #e0e0e0; margin-bottom: 8px;" title="{tooltip}">
-            <div style="font-size: 0.8rem; color: #666;">{icon} {label}</div>
-            <div style="font-size: 1.2rem; font-weight: 700; color: #333;">{value}</div>
+        <div style="background: white; padding: 14px; border-radius: 12px; border: 1px solid #e5e7eb; margin-bottom: 10px; box-shadow: 0 6px 18px rgba(17,24,39,0.06);" title="{tooltip}">
+            <div style="font-size: 0.85rem; color: #6b7280; display:flex; align-items:center; gap:6px;">
+                <span>{icon}</span><span>{label}</span><span style="color:#818CF8;" title="{tooltip}">ⓘ</span>
+            </div>
+            <div style="font-size: 1.4rem; font-weight: 800; color: #10B981;">{value}</div>
         </div>
         """, unsafe_allow_html=True)
 
