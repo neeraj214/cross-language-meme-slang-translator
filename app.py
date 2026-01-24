@@ -148,7 +148,7 @@ def local_css():
         
         /* Skeleton Loader */
         .skeleton {
-            height: 200px;
+            height: 220px;
             border-radius: 12px;
             background: linear-gradient(90deg, #f2f4f7 25%, #eaeef3 37%, #f2f4f7 63%);
             background-size: 400% 100%;
@@ -389,7 +389,7 @@ def render_translation_ui(language, direction, model_path, model_id, use_prefix,
         output_placeholder = st.empty()
         
         # Initial empty state
-        output_placeholder.text_area(label="Output", label_visibility="collapsed", height=235, disabled=True, value="", key=f"{key_base}_output")
+        output_placeholder.text_area(label="Output", label_visibility="visible", height=260, disabled=True, value="", placeholder="Your translated text will appear here", key=f"{key_base}_output")
 
         if translate_btn:
             if source_text:
@@ -401,8 +401,8 @@ def render_translation_ui(language, direction, model_path, model_id, use_prefix,
                     translated = translate_text(src, model, tokenizer)
                     output_placeholder.text_area(
                         label="Output", 
-                        label_visibility="collapsed", 
-                        height=235, 
+                        label_visibility="visible", 
+                        height=260, 
                         value=translated,
                         key=f"{key_base}_output_result"
                     )
