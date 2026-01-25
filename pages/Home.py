@@ -26,6 +26,7 @@ html, body, [class*="css"] { font-family: 'Inter', sans-serif; }
   border-radius: 50%;
   animation: float 10s ease-in-out infinite;
 }
+.hero-grid { display:flex; align-items:flex-start; gap:24px; }
 .hero h1 {
   margin: 0;
   color: #111827;
@@ -33,6 +34,7 @@ html, body, [class*="css"] { font-family: 'Inter', sans-serif; }
   font-weight: 800;
   letter-spacing: -0.02em;
 }
+.grad { background: linear-gradient(135deg, #4F46E5 0%, #6366F1 100%); -webkit-background-clip: text; background-clip: text; color: transparent; }
 .hero p {
   margin: 10px 0 20px;
   color: #475569;
@@ -65,6 +67,31 @@ html, body, [class*="css"] { font-family: 'Inter', sans-serif; }
 }
 @keyframes float { 0% { transform: translateY(0px) } 50% { transform: translateY(20px) } 100% { transform: translateY(0px) } }
 
+.glass-chat {
+  flex: 1;
+  background: rgba(255,255,255,0.45);
+  border: 1px solid rgba(255,255,255,0.6);
+  border-radius: 20px;
+  backdrop-filter: blur(12px);
+  box-shadow: 0 18px 42px rgba(17,24,39,0.14);
+  padding: 18px;
+}
+.glass-chat .row { display:flex; align-items:center; gap:12px; }
+.bubble-glass {
+  flex:1;
+  background: linear-gradient(180deg, rgba(255,255,255,0.7), rgba(238,242,247,0.7));
+  border: 1px solid rgba(229,231,235,0.9);
+  border-radius: 14px;
+  padding: 12px;
+  color:#1f2937; font-weight:700; box-shadow: 0 8px 20px rgba(17,24,39,0.10);
+}
+.arrow {
+  width: 40px; height: 40px; display:flex; align-items:center; justify-content:center;
+  background: linear-gradient(135deg, #4F46E5 0%, #6366F1 100%); color:#fff; border-radius: 12px; box-shadow: 0 10px 22px rgba(79,70,229,0.35);
+}
+.bubble-sub { color:#64748b; font-weight:600; margin-top:4px; }
+.emoji-glow { text-shadow: 0 0 8px rgba(99,102,241,0.45); }
+
 .cards { margin-top: 26px; display: grid; grid-template-columns: repeat(3, 1fr); gap: 18px; }
 .card {
   background: #fff; border: 1px solid #e5e7eb; border-radius: 16px; padding: 18px;
@@ -75,7 +102,7 @@ html, body, [class*="css"] { font-family: 'Inter', sans-serif; }
 .card p { margin: 0; color: #475569; font-size: 0.95rem; }
 .chip { display:inline-flex; align-items:center; gap:8px; background:#EEF2F7; color:#334155; padding:8px 12px; border-radius:12px; font-weight:700; }
 .trust { display:flex; gap:10px; margin-top: 12px; }
-.trust .pill { background:#F1F5F9; color:#334155; border-color:#94A3B8; }
+.trust .pill { background:#EEF2FF; color:#4338CA; border-color:#A5B4FC; }
 
 .preview {
   margin-top: 18px; display: grid; grid-template-columns: 1.05fr 0.95fr; gap: 16px;
@@ -110,18 +137,35 @@ st.markdown(
     """
     <section class="hero">
       <div class="blob"></div>
-      <div class="chip">✨ Slang & Meme Translator</div>
-      <h1 class="fadeUp">Understand internet slang, memes, and Gen‑Z language instantly using AI.</h1>
-      <p>Translate casual posts, comments, and Hinglish code‑mix into clear, professional English — and back again.</p>
-      <div class="cta-row">
-        <a href="../" class="cta-primary">⚡ Try the Translator</a>
-        <a href="https://github.com/neeraj214/cross-language-meme-slang-translator" target="_blank" class="cta-secondary">View on GitHub</a>
-        <a href="#features" onclick="document.getElementById('features').scrollIntoView({behavior:'smooth'}); return false;" class="cta-secondary">Learn more</a>
-      </div>
-      <div class="trust">
-        <div class="pill">Built on T5</div>
-        <div class="pill">Hinglish support</div>
-        <div class="pill">BLEU‑validated</div>
+      <div class="hero-grid">
+        <div style="flex:1.1;">
+          <div class="chip">✨ Slang & Meme Translator</div>
+          <h1 class="fadeUp">Understand internet slang, memes, and <span class="grad">Gen‑Z language</span> <span class="grad">instantly</span> using AI.</h1>
+          <p>Translate casual posts, comments, and Hinglish code‑mix into clear, professional English — and back again.</p>
+          <div class="cta-row">
+            <a href="../" class="cta-primary">⚡ Try the Translator</a>
+            <a href="https://github.com/neeraj214/cross-language-meme-slang-translator" target="_blank" class="cta-secondary">View on GitHub</a>
+            <a href="#features" onclick="document.getElementById('features').scrollIntoView({behavior:'smooth'}); return false;" class="cta-secondary">Learn more</a>
+          </div>
+          <div class="trust">
+            <div class="pill">Built on T5</div>
+            <div class="pill">Hinglish support</div>
+            <div class="pill">BLEU‑validated</div>
+          </div>
+        </div>
+        <div class="glass-chat">
+          <div class="row">
+            <div class="bubble-glass">
+              <div><span class="emoji-glow">💬</span> “that’s no cap, fr fr”</div>
+              <div class="sub bubble-sub">before</div>
+            </div>
+            <div class="arrow">➜</div>
+            <div class="bubble-glass">
+              <div>“that is the truth, i am being serious.”</div>
+              <div class="sub bubble-sub">after</div>
+            </div>
+          </div>
+        </div>
       </div>
     </section>
     """,
@@ -130,19 +174,19 @@ st.markdown(
 
 st.markdown(
     """
-    <div id="features" class="cards fadeUp">
+    <div id="features" class="cards fadeUp" style="grid-template-columns: 1.3fr 1fr 1fr;">
       <div class="card">
-        <div>🕵️‍♂️</div>
+        <div style="font-size:1.3rem; text-shadow: 0 0 8px rgba(99,102,241,0.45);">🕵️‍♂️</div>
         <h3>Slang Detection</h3>
         <p>Identifies emoji, abbreviations, and informal phrases for accurate meaning.</p>
       </div>
       <div class="card">
-        <div>🧠</div>
+        <div style="font-size:1.3rem; text-shadow: 0 0 8px rgba(99,102,241,0.45);">🧠</div>
         <h3>Meme Context</h3>
         <p>Understands meme tone and intent to preserve humor and nuance.</p>
       </div>
       <div class="card">
-        <div>🌐</div>
+        <div style="font-size:1.3rem; text-shadow: 0 0 8px rgba(99,102,241,0.45);">🌐</div>
         <h3>Multi‑Language</h3>
         <p>Handles English and Hinglish code‑mix for seamless translation.</p>
       </div>
@@ -188,7 +232,7 @@ st.markdown(
     unsafe_allow_html=True
 )
 
-user_text = st.text_input("Type slang or Hinglish", value="Bro this meme is fire 💀", placeholder="e.g., Bro this meme is fire �")
+user_text = st.text_input("Type some slang here…", value="That's no cap, fr fr", placeholder="e.g., That's no cap, fr fr")
 go = st.button("Preview Translation", type="primary")
 
 mapping = {
@@ -198,6 +242,8 @@ mapping = {
     "ain’t no way": "i can’t believe this.",
     "op": "overpowered or awesome.",
     "meme is fire": "this meme is extremely funny or impressive.",
+    "no cap": "that is the truth.",
+    "fr fr": "i am being serious.",
 }
 
 result = ""
