@@ -46,6 +46,7 @@ html, body, [class*="css"] { font-family: 'Inter', sans-serif; }
   box-shadow: 0 8px 18px rgba(17,24,39,0.06);
   font-weight: 700;
 }
+.cta-secondary:hover { border-color: #818CF8; box-shadow: 0 10px 22px rgba(17,24,39,0.08); transform: translateY(-1px); }
 .blob {
   position: absolute; right: -100px; top: -120px; width: 360px; height: 360px;
   background: radial-gradient(closest-side, rgba(99,102,241,0.18), rgba(16,185,129,0.12));
@@ -60,6 +61,7 @@ html, body, [class*="css"] { font-family: 'Inter', sans-serif; }
   background: #fff; border: 1px solid #e5e7eb; border-radius: 16px; padding: 18px;
   box-shadow: 0 10px 24px rgba(17,24,39,0.08);
 }
+.card:hover { transform: translateY(-3px); box-shadow: 0 14px 32px rgba(17,24,39,0.12); transition: all 220ms ease; }
 .card h3 { margin: 6px 0 6px; color: #111827; font-size: 1.05rem; font-weight: 800; }
 .card p { margin: 0; color: #475569; font-size: 0.95rem; }
 .chip { display:inline-flex; align-items:center; gap:8px; background:#EEF2F7; color:#334155; padding:8px 12px; border-radius:12px; font-weight:700; }
@@ -71,6 +73,7 @@ html, body, [class*="css"] { font-family: 'Inter', sans-serif; }
   background: #fff; border: 1px solid #e5e7eb; border-radius: 16px; padding: 14px;
   box-shadow: 0 10px 24px rgba(17,24,39,0.08);
 }
+.bubble:hover { transform: translateY(-2px); box-shadow: 0 14px 32px rgba(17,24,39,0.12); transition: all 200ms ease; }
 .bubble h4 { margin: 0 0 8px; color:#111827; font-weight:800; }
 .bubble .text { color:#1f2937; font-weight:700; }
 .bubble .sub { color:#64748b; font-weight:600; }
@@ -79,6 +82,7 @@ html, body, [class*="css"] { font-family: 'Inter', sans-serif; }
   margin-top: 28px; background:#fff; border: 1px solid #e5e7eb; border-radius: 16px; padding: 18px;
   box-shadow: 0 10px 24px rgba(17,24,39,0.08);
 }
+.demo { animation: fadeUp 600ms ease-out both; }
 .demo h3 { margin:0 0 8px; color:#111827; font-weight:800; }
 .split { display:flex; gap:12px; }
 .split .left { flex:1; }
@@ -86,6 +90,8 @@ html, body, [class*="css"] { font-family: 'Inter', sans-serif; }
 .pill {
   display:inline-flex; padding:6px 10px; border-radius:999px; background:#ECFDF5; color:#065F46; font-weight:700; border:1px solid #10B981;
 }
+.fadeUp { animation: fadeUp 640ms ease-out both; }
+@keyframes fadeUp { 0% { opacity: 0; transform: translateY(12px);} 100% { opacity: 1; transform: translateY(0);} }
 </style>
 """, unsafe_allow_html=True)
 
@@ -94,11 +100,12 @@ st.markdown(
     <section class="hero">
       <div class="blob"></div>
       <div class="chip">✨ Slang & Meme Translator</div>
-      <h1>Understand internet slang, memes, and Gen‑Z language instantly using AI.</h1>
+      <h1 class="fadeUp">Understand internet slang, memes, and Gen‑Z language instantly using AI.</h1>
       <p>Translate casual posts, comments, and Hinglish code‑mix into clear, professional English — and back again.</p>
       <div class="cta-row">
         <a href="../" class="cta-primary">⚡ Try the Translator</a>
         <a href="https://github.com/neeraj214/cross-language-meme-slang-translator" target="_blank" class="cta-secondary">View on GitHub</a>
+        <a href="#features" onclick="document.getElementById('features').scrollIntoView({behavior:'smooth'}); return false;" class="cta-secondary">Learn more</a>
       </div>
     </section>
     """,
@@ -107,7 +114,7 @@ st.markdown(
 
 st.markdown(
     """
-    <div class="cards">
+    <div id="features" class="cards fadeUp">
       <div class="card">
         <div>🕵️‍♂️</div>
         <h3>Slang Detection</h3>
@@ -133,6 +140,7 @@ examples = [
     ("that fit is fire 🔥", "the outfit looks amazing."),
     ("yaar mood off ho gaya 😒", "i’m not in a good mood."),
     ("ain’t no way 😭", "i can’t believe this."),
+    ("Bro this meme is fire 💀", "This meme is extremely funny or impressive."),
 ]
 ex_src, ex_tgt = random.choice(examples)
 
@@ -164,7 +172,7 @@ st.markdown(
     unsafe_allow_html=True
 )
 
-user_text = st.text_input("Type slang or Hinglish", value="", placeholder="e.g., bro’s cooking again 😂")
+user_text = st.text_input("Type slang or Hinglish", value="Bro this meme is fire 💀", placeholder="e.g., Bro this meme is fire �")
 go = st.button("Preview Translation", type="primary")
 
 mapping = {
@@ -173,6 +181,7 @@ mapping = {
     "mood off": "i’m not in a good mood.",
     "ain’t no way": "i can’t believe this.",
     "op": "overpowered or awesome.",
+    "meme is fire": "this meme is extremely funny or impressive.",
 }
 
 result = ""
