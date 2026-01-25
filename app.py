@@ -421,8 +421,103 @@ def render_translation_ui(language, direction, model_path, model_id, use_prefix,
                 st.warning("Please enter some text to translate.")
         st.markdown("</div>", unsafe_allow_html=True)
 
+def render_home():
+    st.markdown("""
+        <style>
+        .home-hero {
+            background: linear-gradient(135deg, #F8FAFC 0%, #EEF2F7 100%);
+            border: 1px solid #e5e7eb;
+            border-radius: 20px;
+            padding: 48px 40px;
+            box-shadow: 0 18px 42px rgba(17,24,39,0.10);
+            position: relative;
+            overflow: hidden;
+            animation: fadeUp 640ms ease-out both;
+        }
+        .home-hero::before {
+            content: "";
+            position: absolute; right: -120px; top: -140px; width: 380px; height: 380px;
+            background: radial-gradient(closest-side, rgba(99,102,241,0.20), rgba(16,185,129,0.12));
+            filter: blur(42px); border-radius: 50%; animation: float 10s ease-in-out infinite;
+        }
+        .home-hero h1 {
+            margin: 0; color: #111827; font-size: 2.6rem; font-weight: 800; letter-spacing: -0.02em;
+        }
+        .home-hero p {
+            margin: 10px 0 22px; color: #475569; font-size: 1.08rem; font-weight: 600;
+        }
+        .cta-row { display:flex; gap:12px; align-items:center; }
+        .cta {
+            display:inline-flex; align-items:center; justify-content:center; padding: 14px 18px; border-radius: 12px; text-decoration:none; font-weight:800;
+        }
+        .cta-primary { background: linear-gradient(135deg, #4F46E5 0%, #6366F1 100%); color:#fff; box-shadow: 0 12px 26px rgba(79,70,229,0.35); }
+        .cta-primary:hover { transform: translateY(-1px); box-shadow: 0 16px 30px rgba(79,70,229,0.45); }
+        .cta-secondary { background:#fff; border:1px solid #e5e7eb; color:#334155; box-shadow:0 8px 18px rgba(17,24,39,0.06); }
+        .cta-secondary:hover { border-color:#818CF8; transform: translateY(-1px); }
+        .chips { display:flex; gap:10px; margin-top:12px; }
+        .pill { display:inline-flex; padding:6px 10px; border-radius:999px; background:#ECFDF5; color:#065F46; font-weight:700; border:1px solid #10B981; }
+        @keyframes float { 0% { transform: translateY(0)} 50% { transform: translateY(18px)} 100% { transform: translateY(0)} }
+        @keyframes fadeUp { 0% { opacity:0; transform: translateY(12px)} 100% { opacity:1; transform: translateY(0)} }
+        .feature-grid { margin-top: 26px; display:grid; grid-template-columns: repeat(3, 1fr); gap:18px; }
+        .feature-card { background:#fff; border:1px solid #e5e7eb; border-radius:16px; padding:18px; box-shadow:0 10px 24px rgba(17,24,39,0.08); transition: all 220ms ease; }
+        .feature-card:hover { transform: translateY(-3px); box-shadow: 0 14px 32px rgba(17,24,39,0.12); }
+        .feature-card h3 { margin:6px 0 6px; color:#111827; font-size:1.05rem; font-weight:800; }
+        .feature-card p { margin:0; color:#475569; font-size:0.95rem; }
+        .preview { margin-top:18px; display:grid; grid-template-columns: 1.05fr 0.95fr; gap:16px; }
+        .bubble { background:#fff; border:1px solid #e5e7eb; border-radius:16px; padding:14px; box-shadow:0 10px 24px rgba(17,24,39,0.08); }
+        .bubble h4 { margin:0 0 8px; color:#111827; font-weight:800; }
+        .bubble .text { color:#1f2937; font-weight:700; }
+        .bubble .sub { color:#64748b; font-weight:600; }
+        </style>
+    """, unsafe_allow_html=True)
+    st.markdown("""
+        <section class="home-hero">
+            <div class="chip">✨ Slang & Meme Translator</div>
+            <h1>Understand internet slang, memes, and Gen‑Z language instantly using AI.</h1>
+            <p>Translate casual posts, comments, and Hinglish code‑mix into clear, professional English — and back again.</p>
+            <div class="cta-row">
+                <a class="cta cta-primary" href="#" onclick="return false;">⚡ Try the Translator</a>
+                <a class="cta cta-secondary" href="https://github.com/neeraj214/cross-language-meme-slang-translator" target="_blank">View on GitHub</a>
+            </div>
+            <div class="chips">
+                <div class="pill">Built on T5</div>
+                <div class="pill">Hinglish support</div>
+                <div class="pill">BLEU‑validated</div>
+            </div>
+        </section>
+    """, unsafe_allow_html=True)
+    col1, col2, col3 = st.columns([1,1,1])
+    with col1:
+        st.markdown("<div class='feature-card'>🕵️‍♂️<h3>Slang Detection</h3><p>Emoji, abbreviations, and informal phrases recognized.</p></div>", unsafe_allow_html=True)
+    with col2:
+        st.markdown("<div class='feature-card'>🧠<h3>Meme Context</h3><p>Preserves tone and humor with context awareness.</p></div>", unsafe_allow_html=True)
+    with col3:
+        st.markdown("<div class='feature-card'>🌐<h3>Multi‑Language</h3><p>Handles English and Hinglish code‑mix seamlessly.</p></div>", unsafe_allow_html=True)
+    ex_src, ex_tgt = random.choice([
+        ("bro’s cooked 💀", "he messed up badly."),
+        ("that fit is fire 🔥", "the outfit looks amazing."),
+        ("yaar mood off ho gaya 😒", "i’m not in a good mood."),
+        ("ain’t no way 😭", "i can’t believe this."),
+    ])
+    st.markdown(f"""
+        <div class="preview">
+            <div class="bubble"><h4>Slang</h4><div class="text">{ex_src}</div><div class="sub">sample input</div></div>
+            <div class="bubble"><h4>Meaning</h4><div class="text">{ex_tgt}</div><div class="sub">interpreted output</div></div>
+        </div>
+    """, unsafe_allow_html=True)
+    try_btn = st.button("⚡ Try the Translator", type="primary", key="home_try_cta")
+    if try_btn:
+        st.session_state["show_translator"] = True
+        try:
+            st.experimental_rerun()
+        except Exception:
+            pass
+
 # --- Main App ---
 def main():
+    if not st.session_state.get("show_translator", False):
+        render_home()
+        return
     # Sidebar: Modern Config Panel (card-based layout for clarity and hierarchy)
     st.sidebar.title("🛠️ Config")
     st.sidebar.markdown(
