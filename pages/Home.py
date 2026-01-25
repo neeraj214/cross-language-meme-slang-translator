@@ -12,15 +12,24 @@ html, body, [class*="css"] { font-family: 'Inter', sans-serif; }
   background: linear-gradient(135deg, #F8FAFC 0%, #EEF2F7 100%);
   border: 1px solid #e5e7eb;
   border-radius: 18px;
-  padding: 40px;
+  padding: 48px 40px;
   box-shadow: 0 16px 40px rgba(17, 24, 39, 0.10);
   position: relative;
   overflow: hidden;
 }
+.hero::after {
+  content: "";
+  position: absolute;
+  left: -120px; bottom: -140px; width: 380px; height: 380px;
+  background: radial-gradient(closest-side, rgba(79,70,229,0.18), rgba(16,185,129,0.12));
+  filter: blur(42px);
+  border-radius: 50%;
+  animation: float 10s ease-in-out infinite;
+}
 .hero h1 {
   margin: 0;
   color: #111827;
-  font-size: 2.4rem;
+  font-size: 2.6rem;
   font-weight: 800;
   letter-spacing: -0.02em;
 }
@@ -65,6 +74,8 @@ html, body, [class*="css"] { font-family: 'Inter', sans-serif; }
 .card h3 { margin: 6px 0 6px; color: #111827; font-size: 1.05rem; font-weight: 800; }
 .card p { margin: 0; color: #475569; font-size: 0.95rem; }
 .chip { display:inline-flex; align-items:center; gap:8px; background:#EEF2F7; color:#334155; padding:8px 12px; border-radius:12px; font-weight:700; }
+.trust { display:flex; gap:10px; margin-top: 12px; }
+.trust .pill { background:#F1F5F9; color:#334155; border-color:#94A3B8; }
 
 .preview {
   margin-top: 18px; display: grid; grid-template-columns: 1.05fr 0.95fr; gap: 16px;
@@ -106,6 +117,11 @@ st.markdown(
         <a href="../" class="cta-primary">⚡ Try the Translator</a>
         <a href="https://github.com/neeraj214/cross-language-meme-slang-translator" target="_blank" class="cta-secondary">View on GitHub</a>
         <a href="#features" onclick="document.getElementById('features').scrollIntoView({behavior:'smooth'}); return false;" class="cta-secondary">Learn more</a>
+      </div>
+      <div class="trust">
+        <div class="pill">Built on T5</div>
+        <div class="pill">Hinglish support</div>
+        <div class="pill">BLEU‑validated</div>
       </div>
     </section>
     """,
