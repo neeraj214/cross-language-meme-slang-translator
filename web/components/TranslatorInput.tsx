@@ -16,9 +16,15 @@ const examples = [
 export default function TranslatorInput({ onTranslate }: Props) {
   const [text, setText] = useState('')
   const [dir, setDir] = useState<Direction>('forward')
+  const [loading, setLoading] = useState(false)
   const disabled = text.trim().length === 0
 
-  const run = () => onTranslate?.(text, dir)
+  const run = () => {
+    if (disabled || loading) return
+    setLoading(true)
+    onTranslate?.(text, dir)
+    setTimeout(() => setLoading(false), 800)
+  }
 
   return (
     <div className="rounded-xl border bg-card p-5 shadow-md">
@@ -48,6 +54,7 @@ export default function TranslatorInput({ onTranslate }: Props) {
         placeholder="Type some slang here…"
         className="mt-3 w-full rounded-xl border px-4 py-3 text-base shadow-inner focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2"
       />
+      <div className="mt-1 text-xs text-text/60">Examples: “no cap” → truth, “fit is fire” → great outfit</div>
 
       <div className="mt-3 flex flex-wrap gap-2">
         {examples.map((e) => (
@@ -57,11 +64,11 @@ export default function TranslatorInput({ onTranslate }: Props) {
 
       <button
         type="button"
-        disabled={disabled}
+        disabled={disabled || loading}
         onClick={run}
-        className={`mt-4 w-full rounded-xl px-4 py-3 text-base font-extrabold transition shadow-md focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 ${disabled ? 'bg-primary/50 text-white cursor-not-allowed' : 'bg-gradient-to-r from-[var(--primary)] to-[var(--secondary)] text-white hover:shadow-lg'}`}
+        className={`mt-4 w-full rounded-xl px-4 py-3 text-base font-extrabold transition shadow-md focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 ${disabled || loading ? 'bg-primary/50 text-white cursor-not-allowed' : 'btn-cta bg-gradient-to-r from-[var(--primary)] to-[var(--secondary)] text-white hover:shadow-lg'}`}
       >
-        Try Translation
+        {loading ? 'Translating…' : 'Try Translation'}
       </button>
     </div>
   )
