@@ -18,3 +18,67 @@ html, body {
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+.hero-gradient {
+  background: radial-gradient(1200px circle at 0% 0%, rgba(10,36,99,0.08), transparent 40%), radial-gradient(800px circle at 100% 100%, rgba(58,158,158,0.10), transparent 42%);
+}
+
+.glass {
+  background: rgba(255,255,255,0.65);
+  backdrop-filter: blur(10px);
+}
+
+.blob {
+  position: absolute;
+  inset: auto -120px -140px auto;
+  width: 380px;
+  height: 380px;
+  background: radial-gradient(closest-side, rgba(79,70,229,0.20), rgba(16,185,129,0.12));
+  filter: blur(40px);
+  border-radius: 50%;
+  animation: float 10s ease-in-out infinite;
+}
+
+.btn-cta {
+  position: relative;
+  overflow: hidden;
+}
+.btn-cta::after {
+  content: "";
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 0;
+  height: 0;
+  transform: translate(-50%, -50%);
+  background: radial-gradient(circle, rgba(255,255,255,0.5) 0%, rgba(255,255,255,0) 60%);
+  opacity: 0;
+}
+.btn-cta:active::after {
+  width: 220%;
+  height: 220%;
+  opacity: 1;
+  transition: width 400ms ease, height 400ms ease, opacity 600ms ease;
+}
+
+.animate-fade-up {
+  animation: fadeInUp 600ms ease both;
+}
+
+.card-hover {
+  transition: transform 300ms ease, box-shadow 300ms ease;
+}
+.card-hover:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 12px 28px rgba(10,36,99,0.18);
+}
+
+@keyframes fadeInUp {
+  from { opacity: 0; transform: translateY(12px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes float {
+  0%, 100% { transform: translateY(0) }
+  50% { transform: translateY(-6px) }
+}
