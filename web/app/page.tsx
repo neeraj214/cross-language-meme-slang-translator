@@ -20,38 +20,45 @@ export default function Page() {
     <main className="min-h-screen bg-bg">
       <Header />
       <section className="mx-auto max-w-7xl px-6 pt-10">
-        <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
-          <div className="rounded-xl border bg-card p-8 shadow-lg">
-            <div className="text-4xl font-extrabold leading-tight">
-              Understand internet slang, memes, and
-              <span className="bg-gradient-to-r from-[var(--primary)] to-[var(--secondary)] bg-clip-text text-transparent"> Gen‑Z language </span>
-              instantly using AI
+        <div className="relative overflow-hidden rounded-2xl border bg-card p-8 shadow-lg hero-gradient">
+          <div className="grid grid-cols-1 items-start gap-6 lg:grid-cols-2">
+            <div>
+              <div className="text-5xl font-extrabold leading-tight animate-fade-up">
+                Understand internet slang, memes, and
+                <span className="bg-gradient-to-r from-[var(--primary)] to-[var(--secondary)] bg-clip-text text-transparent"> Gen‑Z language </span>
+                instantly using AI
+              </div>
+              <div className="mt-3 text-base text-text/80">Translate casual posts, comments, and Hinglish code‑mix into clear, professional English — and back again.</div>
+              <div className="mt-4 flex flex-wrap items-center gap-2">
+                <TrustBadge label="BLEU‑validated" variant="primary" />
+                <TrustBadge label="Built on T5" variant="secondary" />
+                <TrustBadge label="GitHub Stars" variant="accent" />
+              </div>
+              <div className="mt-6 flex items-center gap-3">
+                <a href="#translator" className="btn-cta rounded-xl bg-gradient-to-r from-[var(--primary)] to-[var(--secondary)] px-5 py-3 text-sm font-extrabold text-white shadow-md transition hover:shadow-lg">Try the Translator</a>
+                <a href="https://github.com/neeraj214/cross-language-meme-slang-translator" target="_blank" className="rounded-xl border border-primary px-5 py-3 text-sm font-semibold text-primary transition hover:bg-primary hover:text-white">View on GitHub</a>
+              </div>
+              <div id="translator" className="mt-6">
+                <TranslatorInput onTranslate={onTranslate} />
+              </div>
             </div>
-            <div className="mt-3 text-base text-text/80">Translate casual posts, comments, and Hinglish code‑mix into clear, professional English — and back again.</div>
-            <div className="mt-4 flex items-center gap-2">
-              <TrustBadge label="BLEU‑validated" variant="primary" />
-              <TrustBadge label="Built on T5" variant="secondary" />
-              <TrustBadge label="GitHub Stars" variant="accent" />
-            </div>
-            <div className="mt-6">
-              <TranslatorInput onTranslate={onTranslate} />
-            </div>
-          </div>
-          <div className="rounded-xl border bg-card p-6 shadow-lg">
-            <div className="flex items-center justify-between">
-              <div className="text-lg font-extrabold">Translation Preview</div>
-              <div className="inline-flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-to-r from-[var(--primary)] to-[var(--secondary)] text-white shadow-md">AI</div>
-            </div>
-            <div className="mt-4 rounded-xl border bg-white/60 backdrop-blur-md p-4 shadow-md">
-              <div className="grid grid-cols-[1fr_60px_1fr] items-center gap-3">
-                <div className="rounded-xl border bg-bg p-3 shadow-inner">
-                  <div className="text-sm font-bold text-text/70">Before</div>
-                  <div className="mt-2 font-extrabold">{input || "that's no cap, fr fr"}</div>
+            <div className="relative">
+              <div className="blob" />
+              <div className="glass rounded-2xl border p-6 shadow-lg">
+                <div className="flex items-center justify-between">
+                  <div className="text-lg font-extrabold">Visual Preview</div>
+                  <div className="inline-flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-to-r from-[var(--primary)] to-[var(--secondary)] text-white shadow-md">AI</div>
                 </div>
-                <div className="flex items-center justify-center rounded-xl bg-gradient-to-r from-[var(--primary)] to-[var(--secondary)] text-white shadow-md">→</div>
-                <div className="rounded-xl border bg-bg p-3 shadow-inner">
-                  <div className="text-sm font-bold text-text/70">After</div>
-                  <div className="mt-2 font-extrabold">{dir === 'forward' ? 'that is the truth, i am being serious' : 'slang style sample'}</div>
+                <div className="mt-4 grid grid-cols-[1fr_56px_1fr] items-center gap-3">
+                  <div className="rounded-xl border bg-bg p-3 shadow-inner">
+                    <div className="text-sm font-bold text-text/70">Before</div>
+                    <div className="mt-2 font-extrabold">{input || "that's no cap, fr fr"}</div>
+                  </div>
+                  <div className="flex h-12 items-center justify-center rounded-xl bg-gradient-to-r from-[var(--primary)] to-[var(--secondary)] text-white shadow-md">→</div>
+                  <div className="rounded-xl border bg-bg p-3 shadow-inner">
+                    <div className="text-sm font-bold text-text/70">After</div>
+                    <div className="mt-2 font-extrabold">{dir === 'forward' ? 'that is the truth, i am being serious' : 'slang style sample'}</div>
+                  </div>
                 </div>
               </div>
             </div>
