@@ -6,17 +6,30 @@ import TranslatorInput from '@/components/TranslatorInput'
 import FeatureCard from '@/components/FeatureCard'
 import DemoShowcase from '@/components/DemoShowcase'
 import TrustBadge from '@/components/TrustBadge'
+import HeroIllustration from '@/components/HeroIllustration'
 import { useEffect, useRef } from 'react'
 
 export default function Page() {
   const [input, setInput] = useState('')
   const [dir, setDir] = useState<'forward' | 'reverse'>('forward')
+  const [output, setOutput] = useState<string>('')
+  const [loading, setLoading] = useState<boolean>(false)
   const featuresRef = useRef<HTMLDivElement | null>(null)
   const demoRef = useRef<HTMLDivElement | null>(null)
 
   const onTranslate = (text: string, d: 'forward' | 'reverse') => {
     setInput(text)
     setDir(d)
+    setLoading(true)
+    fetch('/api/translate', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ text, direction: d }),
+    })
+      .then((r) => r.json())
+      .then((data) => setOutput(data?.output ?? ''))
+      .catch(() => setOutput('translation failed'))
+      .finally(() => setLoading(false))
   }
 
   useEffect(() => {
@@ -69,6 +82,9 @@ export default function Page() {
                   <div className="text-lg font-extrabold">Visual Preview</div>
                   <div className="inline-flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-to-r from-[var(--primary)] to-[var(--secondary)] text-white shadow-md">AI</div>
                 </div>
+                <div className="mt-4 rounded-xl border bg-bg p-3 shadow-inner">
+                  <HeroIllustration />
+                </div>
                 <div className="mt-4 grid grid-cols-[1fr_56px_1fr] items-center gap-3">
                   <div className="rounded-xl border bg-bg p-3 shadow-inner">
                     <div className="text-sm font-bold text-text/70">Before</div>
@@ -77,7 +93,7 @@ export default function Page() {
                   <div className="flex h-12 items-center justify-center rounded-xl bg-gradient-to-r from-[var(--primary)] to-[var(--secondary)] text-white shadow-md">→</div>
                   <div className="rounded-xl border bg-bg p-3 shadow-inner">
                     <div className="text-sm font-bold text-text/70">After</div>
-                    <div className="mt-2 font-extrabold">{dir === 'forward' ? 'that is the truth, i am being serious' : 'slang style sample'}</div>
+                    <div className="mt-2 font-extrabold">{loading ? 'Translating…' : (output || (dir === 'forward' ? 'that is the truth, i am being serious' : 'slang style sample'))}</div>
                   </div>
                 </div>
                 <div className="mt-6 grid grid-cols-3 gap-3">
