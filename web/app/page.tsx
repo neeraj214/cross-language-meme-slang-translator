@@ -6,15 +6,35 @@ import TranslatorInput from '@/components/TranslatorInput'
 import FeatureCard from '@/components/FeatureCard'
 import DemoShowcase from '@/components/DemoShowcase'
 import TrustBadge from '@/components/TrustBadge'
+import { useEffect, useRef } from 'react'
 
 export default function Page() {
   const [input, setInput] = useState('')
   const [dir, setDir] = useState<'forward' | 'reverse'>('forward')
+  const featuresRef = useRef<HTMLDivElement | null>(null)
+  const demoRef = useRef<HTMLDivElement | null>(null)
 
   const onTranslate = (text: string, d: 'forward' | 'reverse') => {
     setInput(text)
     setDir(d)
   }
+
+  useEffect(() => {
+    const targets = [featuresRef.current, demoRef.current].filter(Boolean) as HTMLElement[]
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((e) => {
+          if (e.isIntersecting) {
+            e.target.classList.add('animate-fade-up')
+            observer.unobserve(e.target)
+          }
+        })
+      },
+      { threshold: 0.12 }
+    )
+    targets.forEach((t) => observer.observe(t))
+    return () => observer.disconnect()
+  }, [])
 
   return (
     <main className="min-h-screen bg-bg">
@@ -60,18 +80,32 @@ export default function Page() {
                     <div className="mt-2 font-extrabold">{dir === 'forward' ? 'that is the truth, i am being serious' : 'slang style sample'}</div>
                   </div>
                 </div>
+                <div className="mt-6 grid grid-cols-3 gap-3">
+                  <div className="rounded-xl border bg-bg p-3 shadow-inner text-center">
+                    <div className="text-2xl">💬</div>
+                    <div className="text-xs font-semibold text-text/70">Chat bubble</div>
+                  </div>
+                  <div className="rounded-xl border bg-bg p-3 shadow-inner text-center">
+                    <div className="text-2xl">🧠</div>
+                    <div className="text-xs font-semibold text-text/70">AI assist</div>
+                  </div>
+                  <div className="rounded-xl border bg-bg p-3 shadow-inner text-center">
+                    <div className="text-2xl">✨</div>
+                    <div className="text-xs font-semibold text-text/70">Transform</div>
+                  </div>
+                </div>
               </div>
             </div>
           </div>
         </div>
 
-        <section className="mt-10 grid grid-cols-1 gap-4 md:grid-cols-3">
+        <section ref={featuresRef} className="mt-10 grid grid-cols-1 gap-4 md:grid-cols-3 opacity-0">
           <FeatureCard icon={<span>🕵️‍♂️</span>} title="Slang Detection" description="Emoji, abbreviations, and informal phrases recognized." className="md:col-span-2" />
           <FeatureCard icon={<span>🧠</span>} title="Meme Context" description="Preserves tone and humor with context awareness." />
           <FeatureCard icon={<span>🌐</span>} title="Multi‑Language" description="Handles English and Hinglish code‑mix seamlessly." />
         </section>
 
-        <section className="mt-10">
+        <section ref={demoRef} className="mt-10 opacity-0">
           <DemoShowcase input={input} direction={dir} />
         </section>
       </section>
