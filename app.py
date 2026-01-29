@@ -228,6 +228,8 @@ def load_metrics():
     sacre_paths = [
         os.path.join("results", "metrics", "sacrebleu_forward.json"),
         os.path.join("results", "metrics", "sacrebleu_reverse.json"),
+        os.path.join("results", "metrics", "sacrebleu_forward_rich_raw.json"),
+        os.path.join("results", "metrics", "sacrebleu_forward_rich_norm.json"),
     ]
     for sp in sacre_paths:
         try:
@@ -236,7 +238,15 @@ def load_metrics():
                     data = json.load(f)
                     val = data.get("corpus_bleu")
                     if isinstance(val, (int, float)):
-                        lbl = "forward_test" if "forward" in os.path.basename(sp) else "reverse_test"
+                        base = os.path.basename(sp)
+                        if "reverse" in base:
+                            lbl = "reverse_test"
+                        elif "rich_raw" in base:
+                            lbl = "forward_rich_raw"
+                        elif "rich_norm" in base:
+                            lbl = "forward_rich_norm"
+                        else:
+                            lbl = "forward_test"
                         metrics["bleu"][lbl] = {"bleu_score": float(val)}
         except Exception:
             pass
@@ -575,6 +585,17 @@ def main():
     with col_b:
         val = f"{r_bleu:.2f}" if isinstance(r_bleu, (int, float)) else "—"
         metric_card("Reverse", val, "⬅️")
+    fr_raw = metrics.get("bleu", {}).get("forward_rich_raw", {}).get("bleu_score")
+    fr_norm = metrics.get("bleu", {}).get("forward_rich_norm", {}).get("bleu_score")
+    if isinstance(fr_raw, (int, float)) or isinstance(fr_norm, (int, float)):
+        st.sidebar.caption("Forward BLEU (Rich Dataset)")
+        col_ra, col_rb = st.sidebar.columns(2)
+        with col_ra:
+            val = f"{fr_raw:.2f}" if isinstance(fr_raw, (int, float)) else "—"
+            metric_card("Rich Raw", val, "📄")
+        with col_rb:
+            val = f"{fr_norm:.2f}" if isinstance(fr_norm, (int, float)) else "—"
+            metric_card("Rich Normalized", val, "🧹")
 
     st.sidebar.caption("Style Analysis")
     col_c, col_d = st.sidebar.columns(2)
