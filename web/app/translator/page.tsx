@@ -1,6 +1,7 @@
 'use client'
 
 import { useState } from 'react'
+import Link from 'next/link'
 import ExampleChip from '@/components/ExampleChip'
 import DemoShowcase from '@/components/DemoShowcase'
 
@@ -41,7 +42,12 @@ export default function TranslatorPage() {
             <span className="inline-flex h-9 w-9 items-center justify-center rounded-xl bg-primary text-white shadow-md">AI</span>
             <span className="text-xl font-extrabold">Translator</span>
           </div>
-          <div className="text-sm text-text/70">Slang ↔ English • Hinglish</div>
+          <div className="flex items-center gap-3">
+            <div className="text-sm text-text/70">Slang ↔ English • Hinglish</div>
+            <Link href="/" className="rounded-xl bg-gradient-to-r from-[var(--primary)] to-[var(--secondary)] px-4 py-2 text-sm font-extrabold text-white shadow-md">
+              Home
+            </Link>
+          </div>
         </div>
       </section>
 
