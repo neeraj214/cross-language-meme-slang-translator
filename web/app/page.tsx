@@ -20,11 +20,12 @@ export default function Page() {
         </div>
       </section>
 
-      <section className="mx-auto max-w-7xl px-6 pt-10">
-        <div className="relative overflow-hidden rounded-2xl border bg-card p-8 shadow-lg hero-gradient">
+      <section className="mx-auto max-w-7xl px-6 pt-14">
+        <div className="relative overflow-hidden rounded-2xl border bg-card p-12 shadow-lg hero-gradient hero-xl">
+          <div className="aurora" />
           <div className="grid grid-cols-1 items-start gap-6 lg:grid-cols-2">
             <div>
-              <div className="text-5xl font-extrabold leading-tight">
+              <div className="text-6xl md:text-7xl font-extrabold leading-tight">
                 Understand Internet Slang, Memes & Gen‑Z Language Instantly
               </div>
               <div className="mt-3 text-base text-text/80">Translate slang, Hinglish, and casual internet language into clear English using AI.</div>
