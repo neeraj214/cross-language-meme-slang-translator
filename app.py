@@ -15,156 +15,138 @@ st.set_page_config(
     initial_sidebar_state="expanded"
 )
 
-# Custom CSS for Modern Web-App Look
+# Custom CSS for Premium Modern Look
 def local_css():
     st.markdown("""
         <style>
-        /* Import Google Font */
-        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&family=Inter:wght@400;600;700&display=swap');
 
-        html, body, [class*="css"] {
+        :root {
+            --primary: #6366F1;
+            --primary-glow: rgba(99, 102, 241, 0.4);
+            --secondary: #10B981;
+            --bg-dark: #0F172A;
+            --glass-bg: rgba(255, 255, 255, 0.03);
+            --glass-border: rgba(255, 255, 255, 0.1);
+            --text-main: #F8FAFC;
+            --text-muted: #94A3B8;
+        }
+
+        .stApp {
+            background-color: var(--bg-dark);
+            color: var(--text-main);
             font-family: 'Inter', sans-serif;
         }
 
-        /* Main Container Styling */
-        .reportview-container { background: #F7F9FC; }
-        
+        h1, h2, h3, .brand-text {
+            font-family: 'Outfit', sans-serif;
+            font-weight: 800;
+        }
+
+        /* Glassmorphism Cards */
+        .glass-card {
+            background: var(--glass-bg);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid var(--glass-border);
+            border-radius: 20px;
+            padding: 24px;
+            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+        }
+
         /* Sidebar Styling */
         [data-testid="stSidebar"] {
-            background-color: #ffffff;
-            border-right: 1px solid #f0f0f0;
+            background-color: rgba(15, 23, 42, 0.95);
+            border-right: 1px solid var(--glass-border);
         }
 
-        /* Card Styling for Metrics */
-        div[data-testid="metric-container"] {
-            background-color: #ffffff;
-            border: 1px solid #e0e0e0;
-            padding: 15px;
-            border-radius: 12px;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.02);
-            transition: all 0.3s ease;
-        }
-        div[data-testid="metric-container"]:hover {
-            box-shadow: 0 4px 12px rgba(0,0,0,0.05);
-            transform: translateY(-2px);
-        }
-        [data-testid="stMetricLabel"] {
-            font-size: 0.9rem;
-            color: #666;
-            font-weight: 600;
-        }
-        [data-testid="stMetricValue"] {
-            font-size: 1.8rem;
-            color: #10B981;
-            font-weight: 800;
-        }
-
-        /* Button Styling */
-        .stButton>button {
-            width: 100%;
-            border-radius: 8px;
-            height: 3.6em;
-            font-weight: 600;
-            font-size: 1rem;
-            transition: all 0.2s ease-in-out;
-            border: none;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
-        }
-        
-        /* Primary Button (Translate) */
-        .stButton>button[kind="primary"] {
-            background: linear-gradient(135deg, #4F46E5 0%, #6366F1 100%);
-            color: white;
-        }
-        .stButton>button[kind="primary"]:hover {
-            transform: translateY(-1px);
-            box-shadow: 0 4px 12px rgba(79, 70, 229, 0.35);
-        }
-        .cta-disabled .stButton>button {
-            opacity: 0.55;
-            cursor: not-allowed;
-            box-shadow: none;
-        }
-
-        /* Secondary Button (Example) */
-        .stButton>button[kind="secondary"] {
-            background-color: #f8f9fa;
-            color: #333;
-            border: 1px solid #e0e0e0;
-        }
-        .stButton>button[kind="secondary"]:hover {
-            background-color: #f1f3f5;
-            border-color: #ced4da;
-            color: #000;
-        }
-
-        /* Text Area Styling */
+        /* Input Fields */
         .stTextArea textarea {
-            font-size: 16px !important;
-            border-radius: 12px;
-            border: 1px solid #e0e0e0;
-            padding: 15px;
-            background-color: #ffffff;
-            transition: border-color 0.2s;
-            box-shadow: inset 0 2px 4px rgba(0,0,0,0.01);
+            background: rgba(30, 41, 59, 0.5) !important;
+            color: white !important;
+            border: 1px solid var(--glass-border) !important;
+            border-radius: 12px !important;
+            font-family: 'Inter', sans-serif !important;
         }
+
         .stTextArea textarea:focus {
-            border-color: #4F46E5;
-            box-shadow: 0 0 0 2px rgba(79, 70, 229, 0.2);
-        }
-        .stTextArea textarea::placeholder {
-            color: #9CA3AF;
+            border-color: var(--primary) !important;
+            box-shadow: 0 0 0 2px var(--primary-glow) !important;
         }
 
-        /* Headers */
-        h1 {
-            color: #1a1a1a;
-            font-weight: 800;
-            letter-spacing: -0.5px;
-        }
-        h2, h3 {
-            color: #333;
-            font-weight: 700;
-        }
-
-        /* Tab Styling */
-        .stTabs [data-baseweb="tab-list"] {
-            gap: 24px;
-        }
-        .stTabs [data-baseweb="tab"] {
-            height: 50px;
-            white-space: pre-wrap;
-            background-color: transparent;
-            border-radius: 4px;
-            color: #666;
-            font-weight: 600;
-        }
-        .stTabs [aria-selected="true"] {
-            color: #4F46E5;
-            border-bottom-color: #4F46E5;
-        }
-
-        /* Custom Alert/Info Boxes */
-        .stAlert {
-            border-radius: 8px;
-            border: none;
-            box-shadow: 0 2px 6px rgba(0,0,0,0.05);
-        }
-        
-        /* Skeleton Loader */
-        .skeleton {
-            height: 220px;
+        /* Buttons */
+        .stButton>button {
             border-radius: 12px;
-            background: linear-gradient(90deg, #f2f4f7 25%, #eaeef3 37%, #f2f4f7 63%);
-            background-size: 400% 100%;
-            animation: shimmer 1.4s ease-in-out infinite;
-            border: 1px solid #e5e7eb;
+            font-weight: 700;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
         }
-        @keyframes shimmer {
-          0% { background-position: 100% 0; }
-          100% { background-position: -100% 0; }
+
+        .stButton>button[kind="primary"] {
+            background: linear-gradient(135deg, #6366F1 0%, #4F46E5 100%);
+            border: none;
+            color: white;
+            box-shadow: 0 4px 15px rgba(99, 102, 241, 0.3);
         }
-        
+
+        .stButton>button[kind="primary"]:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(99, 102, 241, 0.5);
+        }
+
+        /* Metrics Display */
+        [data-testid="stMetric"] {
+            background: var(--glass-bg);
+            border: 1px solid var(--glass-border);
+            padding: 15px;
+            border-radius: 16px;
+            text-align: center;
+        }
+
+        /* Tabs Styling */
+        .stTabs [data-baseweb="tab-list"] {
+            gap: 12px;
+            background-color: transparent;
+        }
+
+        .stTabs [data-baseweb="tab"] {
+            background-color: var(--glass-bg);
+            border-radius: 12px 12px 0 0;
+            padding: 10px 20px;
+            color: var(--text-muted);
+        }
+
+        .stTabs [aria-selected="true"] {
+            color: var(--primary) !important;
+            background-color: rgba(99, 102, 241, 0.1) !important;
+            border-bottom: 2px solid var(--primary) !important;
+        }
+
+        /* Animations */
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .animate-fade-in {
+            animation: fadeIn 0.8s ease-out forwards;
+        }
+
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: var(--bg-dark);
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #334155;
+            border-radius: 10px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #475569;
+        }
         </style>
     """, unsafe_allow_html=True)
 
@@ -351,8 +333,8 @@ def render_translation_ui(language, direction, model_path, model_id, use_prefix,
     col1, col2 = st.columns([1, 1], gap="large")
     
     with col1:
-        st.markdown("### 📥 Input")
-        st.markdown("<div style='background:#ffffff; border:1px solid #e5e7eb; border-radius:12px; padding:12px; box-shadow:0 2px 8px rgba(0,0,0,0.04);'>", unsafe_allow_html=True)
+        st.markdown("<div class='glass-card animate-fade-in'>", unsafe_allow_html=True)
+        st.markdown(f"### 📥 Input ({language})")
         
         # Load example text
         example_text = ""
@@ -377,151 +359,103 @@ def render_translation_ui(language, direction, model_path, model_id, use_prefix,
         key_base = f"{language}_{direction}"
         input_key = f"{key_base}_input"
         
-        # Toolbar for input
-        ic1, ic2 = st.columns([1, 1])
-        with ic1:
-             st.caption("Enter text below:")
-        with ic2:
-            if st.button("🎲 Random Example", key=f"{key_base}_ex_btn", help="Load a random example from test set"):
-                st.session_state[input_key] = example_text
-            
         source_text = st.text_area(
-            label="Input",
-            label_visibility="visible",
-            height=240,
-            placeholder="Type your text here… (slang, memes, Hinglish)",
+            label="Translate from:",
+            height=200,
+            placeholder="Type your text here... (e.g. 'this fit is fire 🔥')",
             key=input_key
         )
         
-        st.markdown("<div style='margin-top: 10px;'></div>", unsafe_allow_html=True)
-        if not source_text or not source_text.strip():
-            st.markdown("<div class='cta-disabled'>", unsafe_allow_html=True)
-            translate_btn = st.button("⚡ Translate", key=f"{key_base}_run", type="primary", help="Enter text to enable")
-            st.markdown("</div>", unsafe_allow_html=True)
-        else:
-            translate_btn = st.button("⚡ Translate", key=f"{key_base}_run", type="primary")
+        ic1, ic2 = st.columns([1, 1])
+        with ic1:
+            if st.button("🎲 Random Example", key=f"{key_base}_ex_btn", help="Load sample text"):
+                st.session_state[input_key] = example_text
+                st.rerun()
+        with ic2:
+            translate_btn = st.button("⚡ Translate", key=f"{key_base}_run", type="primary", use_container_width=True)
+            
         st.markdown("</div>", unsafe_allow_html=True)
 
     with col2:
-        st.markdown("### 📤 Output")
-        st.markdown("<div style='background:#ffffff; border:1px solid #e5e7eb; border-radius:12px; padding:12px; box-shadow:0 2px 8px rgba(0,0,0,0.04);'>", unsafe_allow_html=True)
-        st.caption("Translation result:")
+        st.markdown("<div class='glass-card animate-fade-in' style='transition-delay: 0.1s;'>", unsafe_allow_html=True)
+        st.markdown("### 📤 Translation")
+        
         output_placeholder = st.empty()
         
-        # Initial empty state
-        output_placeholder.text_area(label="Output", label_visibility="visible", height=260, disabled=True, value="", placeholder="Your translated text will appear here", key=f"{key_base}_output")
-
-        if translate_btn:
-            if source_text:
-                output_placeholder.markdown("<div class='skeleton'></div>", unsafe_allow_html=True)
-                with st.spinner("Translating…"):
-                    src = source_text
-                    if use_prefix:
-                        src = f"{build_prefix(language, direction, style)} {src}".strip()
-                    translated = translate_text(src, model, tokenizer)
-                    output_placeholder.text_area(
-                        label="Output", 
-                        label_visibility="visible", 
-                        height=260, 
-                        value=translated,
-                        key=f"{key_base}_output_result"
-                    )
-                    st.toast("Translation completed!", icon="✅")
-            else:
-                st.warning("Please enter some text to translate.")
+        if translate_btn and source_text:
+            with st.spinner("Decoding slang..."):
+                src = source_text
+                if use_prefix:
+                    src = f"{build_prefix(language, direction, style)} {src}".strip()
+                translated = translate_text(src, model, tokenizer)
+                output_placeholder.code(translated, language=None)
+                st.toast("Translation successful!", icon="✨")
+        else:
+            output_placeholder.info("Translation will appear here after clicking 'Translate'")
+        
         st.markdown("</div>", unsafe_allow_html=True)
 
 def render_home():
     st.markdown("""
-        <style>
-        .home-hero {
-            background: linear-gradient(135deg, #F8FAFC 0%, #EEF2F7 100%);
-            border: 1px solid #e5e7eb;
-            border-radius: 20px;
-            padding: 48px 40px;
-            box-shadow: 0 18px 42px rgba(17,24,39,0.10);
-            position: relative;
-            overflow: hidden;
-            animation: fadeUp 640ms ease-out both;
-        }
-        .home-hero::before {
-            content: "";
-            position: absolute; right: -120px; top: -140px; width: 380px; height: 380px;
-            background: radial-gradient(closest-side, rgba(99,102,241,0.20), rgba(16,185,129,0.12));
-            filter: blur(42px); border-radius: 50%; animation: float 10s ease-in-out infinite;
-        }
-        .home-hero h1 {
-            margin: 0; color: #111827; font-size: 2.6rem; font-weight: 800; letter-spacing: -0.02em;
-        }
-        .home-hero p {
-            margin: 10px 0 22px; color: #475569; font-size: 1.08rem; font-weight: 600;
-        }
-        .cta-row { display:flex; gap:12px; align-items:center; }
-        .cta {
-            display:inline-flex; align-items:center; justify-content:center; padding: 14px 18px; border-radius: 12px; text-decoration:none; font-weight:800;
-        }
-        .cta-primary { background: linear-gradient(135deg, #4F46E5 0%, #6366F1 100%); color:#fff; box-shadow: 0 12px 26px rgba(79,70,229,0.35); }
-        .cta-primary:hover { transform: translateY(-1px); box-shadow: 0 16px 30px rgba(79,70,229,0.45); }
-        .cta-secondary { background:#fff; border:1px solid #e5e7eb; color:#334155; box-shadow:0 8px 18px rgba(17,24,39,0.06); }
-        .cta-secondary:hover { border-color:#818CF8; transform: translateY(-1px); }
-        .chips { display:flex; gap:10px; margin-top:12px; }
-        .pill { display:inline-flex; padding:6px 10px; border-radius:999px; background:#ECFDF5; color:#065F46; font-weight:700; border:1px solid #10B981; }
-        @keyframes float { 0% { transform: translateY(0)} 50% { transform: translateY(18px)} 100% { transform: translateY(0)} }
-        @keyframes fadeUp { 0% { opacity:0; transform: translateY(12px)} 100% { opacity:1; transform: translateY(0)} }
-        .feature-grid { margin-top: 26px; display:grid; grid-template-columns: repeat(3, 1fr); gap:18px; }
-        .feature-card { background:#fff; border:1px solid #e5e7eb; border-radius:16px; padding:18px; box-shadow:0 10px 24px rgba(17,24,39,0.08); transition: all 220ms ease; }
-        .feature-card:hover { transform: translateY(-3px); box-shadow: 0 14px 32px rgba(17,24,39,0.12); }
-        .feature-card h3 { margin:6px 0 6px; color:#111827; font-size:1.05rem; font-weight:800; }
-        .feature-card p { margin:0; color:#475569; font-size:0.95rem; }
-        .preview { margin-top:18px; display:grid; grid-template-columns: 1.05fr 0.95fr; gap:16px; }
-        .bubble { background:#fff; border:1px solid #e5e7eb; border-radius:16px; padding:14px; box-shadow:0 10px 24px rgba(17,24,39,0.08); }
-        .bubble h4 { margin:0 0 8px; color:#111827; font-weight:800; }
-        .bubble .text { color:#1f2937; font-weight:700; }
-        .bubble .sub { color:#64748b; font-weight:600; }
-        </style>
-    """, unsafe_allow_html=True)
-    st.markdown("""
-        <section class="home-hero">
-            <div class="chip">✨ Slang & Meme Translator</div>
-            <h1>Understand internet slang, memes, and Gen‑Z language instantly using AI.</h1>
-            <p>Translate casual posts, comments, and Hinglish code‑mix into clear, professional English — and back again.</p>
-            <div class="cta-row">
-                <a class="cta cta-primary" href="#" onclick="return false;">⚡ Try the Translator</a>
-                <a class="cta cta-secondary" href="https://github.com/neeraj214/cross-language-meme-slang-translator" target="_blank">View on GitHub</a>
+        <div class="animate-fade-in" style="text-align: center; padding: 40px 20px;">
+            <div style="display: inline-block; padding: 8px 16px; border-radius: 99px; background: rgba(99, 102, 241, 0.1); border: 1px solid rgba(99, 102, 241, 0.2); color: #818CF8; font-weight: 700; font-size: 0.85rem; margin-bottom: 24px; letter-spacing: 1px; text-transform: uppercase;">
+                ✨ The Future of Slang Translation
             </div>
-            <div class="chips">
-                <div class="pill">Built on T5</div>
-                <div class="pill">Hinglish support</div>
-                <div class="pill">BLEU‑validated</div>
-            </div>
-        </section>
-    """, unsafe_allow_html=True)
-    col1, col2, col3 = st.columns([1,1,1])
-    with col1:
-        st.markdown("<div class='feature-card'>🕵️‍♂️<h3>Slang Detection</h3><p>Emoji, abbreviations, and informal phrases recognized.</p></div>", unsafe_allow_html=True)
-    with col2:
-        st.markdown("<div class='feature-card'>🧠<h3>Meme Context</h3><p>Preserves tone and humor with context awareness.</p></div>", unsafe_allow_html=True)
-    with col3:
-        st.markdown("<div class='feature-card'>🌐<h3>Multi‑Language</h3><p>Handles English and Hinglish code‑mix seamlessly.</p></div>", unsafe_allow_html=True)
-    ex_src, ex_tgt = random.choice([
-        ("bro’s cooked 💀", "he messed up badly."),
-        ("that fit is fire 🔥", "the outfit looks amazing."),
-        ("yaar mood off ho gaya 😒", "i’m not in a good mood."),
-        ("ain’t no way 😭", "i can’t believe this."),
-    ])
-    st.markdown(f"""
-        <div class="preview">
-            <div class="bubble"><h4>Slang</h4><div class="text">{ex_src}</div><div class="sub">sample input</div></div>
-            <div class="bubble"><h4>Meaning</h4><div class="text">{ex_tgt}</div><div class="sub">interpreted output</div></div>
+            <h1 style="font-size: 3.5rem; line-height: 1.1; margin-bottom: 24px; background: linear-gradient(135deg, #F8FAFC 0%, #CBD5E1 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">
+                Decipher the Internet.<br>Master the Meme.
+            </h1>
+            <p style="font-size: 1.25rem; color: #94A3B8; max-width: 700px; margin: 0 auto 40px; line-height: 1.6;">
+                Bridge the gap between internet slang, memes, and standard English using our fine-tuned AI. Seamlessly translate across English and Hinglish.
+            </p>
         </div>
     """, unsafe_allow_html=True)
-    try_btn = st.button("⚡ Try the Translator", type="primary", key="home_try_cta")
-    if try_btn:
-        st.session_state["show_translator"] = True
-        try:
-            st.experimental_rerun()
-        except Exception:
-            pass
+    
+    # Feature Cards
+    col1, col2, col3 = st.columns(3)
+    with col1:
+        st.markdown("""
+            <div class="glass-card animate-fade-in" style="height: 100%;">
+                <div style="font-size: 2rem; margin-bottom: 16px;">🕵️‍♂️</div>
+                <h3 style="color: #F8FAFC; margin-bottom: 12px;">Slang Detection</h3>
+                <p style="color: #94A3B8; font-size: 0.95rem;">emoji, abbreviations, and informal phrases recognized with high precision.</p>
+            </div>
+        """, unsafe_allow_html=True)
+    with col2:
+        st.markdown("""
+            <div class="glass-card animate-fade-in" style="height: 100%; transition-delay: 0.1s;">
+                <div style="font-size: 2rem; margin-bottom: 16px;">🧠</div>
+                <h3 style="color: #F8FAFC; margin-bottom: 12px;">Meme Context</h3>
+                <p style="color: #94A3B8; font-size: 0.95rem;">Preserves humor and nuance across cultural contexts and internet trends.</p>
+            </div>
+        """, unsafe_allow_html=True)
+    with col3:
+        st.markdown("""
+            <div class="glass-card animate-fade-in" style="height: 100%; transition-delay: 0.2s;">
+                <div style="font-size: 2rem; margin-bottom: 16px;">🌐</div>
+                <h3 style="color: #F8FAFC; margin-bottom: 12px;">Multi-Language</h3>
+                <p style="color: #94A3B8; font-size: 0.95rem;">Native support for Hinglish code-mixing and regional slang patterns.</p>
+            </div>
+        """, unsafe_allow_html=True)
+
+    st.markdown("<div style='margin-bottom: 48px;'></div>", unsafe_allow_html=True)
+
+    # Preview Section
+    preview_col1, preview_col2 = st.columns([1, 1])
+    with preview_col1:
+        st.markdown("<div style='color: #F8FAFC; font-weight: 700; margin-bottom: 12px;'>Example Input</div>", unsafe_allow_html=True)
+        st.code("bro's cooked 💀 he really thought he ate with that fit.", language=None)
+    with preview_col2:
+        st.markdown("<div style='color: #10B981; font-weight: 700; margin-bottom: 12px;'>AI Translation</div>", unsafe_allow_html=True)
+        st.code("He is in a very bad situation. He mistakenly believed his outfit looked good.", language=None)
+
+    st.markdown("<div style='margin-bottom: 48px;'></div>", unsafe_allow_html=True)
+    
+    # CTA
+    c1, c2, c3 = st.columns([1, 2, 1])
+    with c2:
+        if st.button("🚀 Enter Translator", type="primary", use_container_width=True):
+            st.session_state["show_translator"] = True
+            st.rerun()
 
 # --- Main App ---
 def main():
@@ -529,117 +463,83 @@ def main():
         render_home()
         return
     # Sidebar: Modern Config Panel (card-based layout for clarity and hierarchy)
-    st.sidebar.title("🛠️ Config")
-    st.sidebar.markdown(
-        "<div style='background: #ffffff; border: 1px solid #e5e7eb; border-radius: 16px; padding: 20px; box-shadow: 0 8px 24px rgba(17,24,39,0.06); margin-bottom: 16px;'>"
-        "<div style='font-weight:800; color:#111827; margin-bottom:10px;'>Configuration</div>"
-        "<div style='color:#6b7280; font-size:0.95rem; margin-bottom:14px;'>Set your language pair and translation style. These preferences guide how outputs are generated.</div>",
-        unsafe_allow_html=True
-    )
+    # Sidebar: Modern Config Panel
+    st.sidebar.markdown(f"""
+        <div class="glass-card" style="margin-bottom: 24px;">
+            <h2 style="margin:0; color:var(--text-main); font-size:1.5rem;">🛠️ Settings</h2>
+            <p style="color:var(--text-muted); font-size:0.9rem; margin-top:8px;">Configure the model and translation style.</p>
+        </div>
+    """, unsafe_allow_html=True)
+    
     language = st.sidebar.radio(
         "Language Pair",
         ["English", "Hinglish"],
-        help="Choose between English-only translations or English↔Hinglish code-mixed translations."
+        help="Choose between English-only or English↔Hinglish."
     )
     style = st.sidebar.selectbox(
         "Translation Style",
         ["Neutral", "Casual", "Meme-heavy"],
         index=0,
-        help="Neutral keeps tone formal; Casual adds informality; Meme-heavy preserves meme/slang context."
     )
     use_prefix = st.sidebar.checkbox(
         "Use Task Prefix",
         value=APPLY_TASK_PREFIX,
-        help="Adds an instruction prefix to the model input for more consistent outputs."
     )
-    st.sidebar.markdown(
-        "<div style='border-top:1px dashed #e5e7eb; margin:16px 0;'></div>"
-        "<div style='color:#6b7280; font-size:0.9rem;'>Tip: Switch language pairs via tabs in the main area for faster workflow.</div>"
-        "</div>",
-        unsafe_allow_html=True
-    )
-    
+
     # 2. Metrics Dashboard in Sidebar
-    st.sidebar.title("📊 Metrics")
+    st.sidebar.markdown("<br>", unsafe_allow_html=True)
+    st.sidebar.markdown("<h2 style='font-size:1.2rem; margin-bottom:12px;'>📊 Performance</h2>", unsafe_allow_html=True)
+    
     metrics = load_metrics()
     f_bleu, r_bleu = pick_bleu_scores(metrics.get("bleu", {}))
     emoji_avg, slang_avg = summarize_style(metrics.get("style", {}))
     
-    # Custom Card HTML for Sidebar
-    def metric_card(label, value, icon=""):
-        tooltip = "BLEU measures similarity to reference translations; higher is better."
-        st.sidebar.markdown(f"""
-        <div style="background: white; padding: 14px; border-radius: 12px; border: 1px solid #e5e7eb; margin-bottom: 10px; box-shadow: 0 6px 18px rgba(17,24,39,0.06);" title="{tooltip}">
-            <div style="font-size: 0.85rem; color: #6b7280; display:flex; align-items:center; gap:6px;">
-                <span>{icon}</span><span>{label}</span><span style="color:#818CF8;" title="{tooltip}">ⓘ</span>
-            </div>
-            <div style="font-size: 1.4rem; font-weight: 800; color: #10B981;">{value}</div>
-        </div>
-        """, unsafe_allow_html=True)
-
-    st.sidebar.caption("BLEU Scores (Accuracy)")
-    col_a, col_b = st.sidebar.columns(2)
-    with col_a:
-        val = f"{f_bleu:.2f}" if isinstance(f_bleu, (int, float)) else "—"
-        metric_card("Forward", val, "➡️")
-    with col_b:
-        val = f"{r_bleu:.2f}" if isinstance(r_bleu, (int, float)) else "—"
-        metric_card("Reverse", val, "⬅️")
-    fr_raw = metrics.get("bleu", {}).get("forward_rich_raw", {}).get("bleu_score")
-    fr_norm = metrics.get("bleu", {}).get("forward_rich_norm", {}).get("bleu_score")
-    if isinstance(fr_raw, (int, float)) or isinstance(fr_norm, (int, float)):
-        st.sidebar.caption("Forward BLEU (Rich Dataset)")
-        col_ra, col_rb = st.sidebar.columns(2)
-        with col_ra:
-            val = f"{fr_raw:.2f}" if isinstance(fr_raw, (int, float)) else "—"
-            metric_card("Rich Raw", val, "📄")
-        with col_rb:
-            val = f"{fr_norm:.2f}" if isinstance(fr_norm, (int, float)) else "—"
-            metric_card("Rich Normalized", val, "🧹")
-
-    st.sidebar.caption("Style Analysis")
-    col_c, col_d = st.sidebar.columns(2)
-    with col_c:
-        val = f"{emoji_avg:.2f}" if isinstance(emoji_avg, (int, float)) else "—"
-        metric_card("Emoji %", val, "😀")
-    with col_d:
-        val = f"{slang_avg:.2f}" if isinstance(slang_avg, (int, float)) else "—"
-        metric_card("Slang %", val, "💬")
+    m_col1, m_col2 = st.sidebar.columns(2)
+    with m_col1:
+        st.metric("Forward BLEU", f"{f_bleu:.1f}" if f_bleu else "N/A")
+    with m_col2:
+        st.metric("Reverse BLEU", f"{r_bleu:.1f}" if r_bleu else "N/A")
 
     # Main Content Area
     st.markdown(
-        """
-        <section style="background: linear-gradient(135deg, #F8FAFC 0%, #EEF2F7 100%); padding: 24px; border-radius: 16px; border: 1px solid #e5e7eb; margin: 8px 0 24px;">
-            <div style="display:flex; align-items:center; gap:14px;">
-                <div style="background: linear-gradient(135deg, #4F46E5 0%, #6366F1 100%); color:white; width:40px; height:40px; display:flex; align-items:center; justify-content:center; border-radius:12px; font-weight:800; box-shadow: 0 6px 16px rgba(79,70,229,0.25);">AI</div>
+        f"""
+        <div class="animate-fade-in" style="margin-bottom: 32px;">
+            <div style="display:flex; align-items:center; gap:16px;">
+                <div style="background: linear-gradient(135deg, #6366F1 0%, #4F46E5 100%); color:white; width:48px; height:48px; display:flex; align-items:center; justify-content:center; border-radius:14px; font-weight:800; font-size:1.2rem; box-shadow: 0 8px 16px rgba(99,102,241,0.3);">AI</div>
                 <div>
-                    <h1 style="margin:0; color:#111827; font-size:2.1rem; font-weight:800; letter-spacing:-0.02em;">🔁 Slang/Meme Translator</h1>
-                    <p style="margin:6px 0 0; color:#6b7280; font-size:1rem;">Translate internet slang, memes, and Hinglish with controllable tone and clear outputs.</p>
+                    <h1 style="margin:0; font-size:2.2rem;">Translator Lab</h1>
+                    <p style="margin:0; color:var(--text-muted);">Current Mode: {language} ({style} style)</p>
                 </div>
             </div>
-        </section>
+        </div>
         """,
         unsafe_allow_html=True
     )
     
     if language == "English":
-        tab1, tab2 = st.tabs(["🇺🇸 Slang ➡️ English", "🇺🇸 English ➡️ Slang"])
+        tab1, tab2 = st.tabs(["🇺🇸 Slang ➡️ Std English", "🇺🇸 Std English ➡️ Slang"])
         with tab1:
             render_translation_ui("English", "forward", FORWARD_MODEL_PATH, FORWARD_MODEL_ID, use_prefix, style)
         with tab2:
             render_translation_ui("English", "reverse", REVERSE_MODEL_PATH, REVERSE_MODEL_ID, use_prefix, style)
     
     else:  # Hinglish
-        tab1, tab2 = st.tabs(["🇮🇳 Hinglish ➡️ English", "🇮🇳 English ➡️ Hinglish"])
+        tab1, tab2 = st.tabs(["🇮🇳 Hinglish ➡️ Std English", "🇮🇳 Std English ➡️ Hinglish"])
         with tab1:
             render_translation_ui("Hinglish", "forward", HINGLISH_FORWARD_MODEL_PATH, HINGLISH_FORWARD_MODEL_ID, use_prefix, style)
         with tab2:
             render_translation_ui("Hinglish", "reverse", HINGLISH_REVERSE_MODEL_PATH, HINGLISH_REVERSE_MODEL_ID, use_prefix, style)
 
     # Footer
-    st.markdown("---")
+    st.markdown("<div style='margin-bottom: 60px;'></div>", unsafe_allow_html=True)
     st.markdown(
-        "<div style='text-align: center; color: #888; font-size: 0.8rem;'>Built with ❤️ using T5 & Streamlit</div>", 
+        """
+        <div style='text-align: center; padding: 24px; border-top: 1px solid var(--glass-border);'>
+            <p style='color: var(--text-muted); font-size: 0.9rem;'>
+                Built with ❤️ using <b>FLAN-T5</b> & <b>Streamlit</b> • MCA Semester 1 NLP Project
+            </p>
+        </div>
+        """, 
         unsafe_allow_html=True
     )
 
