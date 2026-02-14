@@ -1,12 +1,23 @@
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap');
 
 :root {
-  --primary: #0A2463;
-  --secondary: #3A9E9E;
-  --accent: #FF6B35;
+  --primary: #5B6BFF;
+  --secondary: #6BC1FF;
+  --accent: #A78BFA;
+  --background: radial-gradient(1200px circle at 0% 0%, #0B1220, transparent 38%), radial-gradient(1000px circle at 100% 100%, #101826, transparent 42%), #0B1220;
+  --text: #E5E7EB;
+  --muted: #9CA3AF;
+  --card-bg: rgba(16, 24, 38, 0.72);
+  --card-border: rgba(148, 163, 184, 0.18);
+  --shadow: 0 10px 24px rgba(2, 6, 23, 0.35);
+}
+body.light {
   --background: #F8F9FA;
-  --text: #2D3436;
-  --card-bg: #FFFFFF;
+  --text: #1F2937;
+  --muted: #6B7280;
+  --card-bg: rgba(255, 255, 255, 0.72);
+  --card-border: rgba(2, 6, 23, 0.08);
+  --shadow: 0 10px 24px rgba(2, 6, 23, 0.18);
 }
 
 html, body {
@@ -20,7 +31,7 @@ html, body {
 @tailwind utilities;
 
 .hero-gradient {
-  background: radial-gradient(1200px circle at 0% 0%, rgba(10,36,99,0.08), transparent 40%), radial-gradient(800px circle at 100% 100%, rgba(58,158,158,0.10), transparent 42%);
+  background: radial-gradient(1200px circle at 0% 0%, rgba(91,107,255,0.18), transparent 40%), radial-gradient(800px circle at 100% 100%, rgba(107,193,255,0.16), transparent 42%);
 }
 
 .aurora {
@@ -39,8 +50,11 @@ html, body {
   min-height: 420px;
 }
 .glass {
-  background: rgba(255,255,255,0.65);
-  backdrop-filter: blur(10px);
+  background: var(--card-bg);
+  border: 1px solid var(--card-border);
+  backdrop-filter: blur(14px);
+  box-shadow: var(--shadow);
+  border-radius: 18px;
 }
 
 .blob {
@@ -48,7 +62,7 @@ html, body {
   inset: auto -120px -140px auto;
   width: 380px;
   height: 380px;
-  background: radial-gradient(closest-side, rgba(79,70,229,0.20), rgba(16,185,129,0.12));
+  background: radial-gradient(closest-side, rgba(167,139,250,0.18), rgba(91,107,255,0.12));
   filter: blur(40px);
   border-radius: 50%;
   animation: float 10s ease-in-out infinite;
@@ -66,7 +80,7 @@ html, body {
   width: 0;
   height: 0;
   transform: translate(-50%, -50%);
-  background: radial-gradient(circle, rgba(255,255,255,0.5) 0%, rgba(255,255,255,0) 60%);
+  background: radial-gradient(circle, rgba(255,255,255,0.3) 0%, rgba(255,255,255,0) 60%);
   opacity: 0;
 }
 .btn-cta:active::after {
@@ -75,10 +89,30 @@ html, body {
   opacity: 1;
   transition: width 400ms ease, height 400ms ease, opacity 600ms ease;
 }
+.btn-cta {
+  transition: transform 280ms cubic-bezier(0.22, 1, 0.36, 1), box-shadow 280ms cubic-bezier(0.22, 1, 0.36, 1), background-position 300ms ease;
+  background-size: 200% 200%;
+}
+.btn-cta:hover {
+  transform: translateY(-2px) scale(1.03);
+  box-shadow: 0 18px 36px rgba(91,107,255,0.28);
+  background-position: right center;
+}
 
 .animate-fade-up {
   animation: fadeInUp 600ms ease both;
 }
+
+.animate-stagger > * {
+  opacity: 0;
+  transform: translateY(12px);
+  animation: fadeInUp 680ms cubic-bezier(0.22, 1, 0.36, 1) forwards;
+}
+.animate-stagger > *:nth-child(1) { animation-delay: 60ms }
+.animate-stagger > *:nth-child(2) { animation-delay: 160ms }
+.animate-stagger > *:nth-child(3) { animation-delay: 260ms }
+.animate-stagger > *:nth-child(4) { animation-delay: 360ms }
+.animate-stagger > *:nth-child(5) { animation-delay: 460ms }
 
 .page-enter {
   animation: fadeIn 480ms ease both;
@@ -93,12 +127,31 @@ html, body {
   transform: translateY(0);
 }
 
+.nav-link {
+  position: relative;
+}
+.nav-link::after {
+  content: "";
+  position: absolute;
+  left: 12px;
+  right: 12px;
+  bottom: 6px;
+  height: 2px;
+  border-radius: 999px;
+  background: linear-gradient(90deg, var(--primary), var(--accent));
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform 240ms ease;
+}
+.nav-link:hover::after { transform: scaleX(1) }
+
 .card-hover {
   transition: transform 300ms ease, box-shadow 300ms ease;
 }
 .card-hover:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 12px 28px rgba(10,36,99,0.18);
+  transform: translateY(-8px);
+  box-shadow: 0 24px 48px rgba(2, 6, 23, 0.44);
+  border-color: rgba(255,255,255,0.18);
 }
 
 @keyframes fadeInUp {
@@ -115,6 +168,14 @@ html, body {
 @keyframes fadeIn {
   from { opacity: 0 }
   to { opacity: 1 }
+}
+
+.noise {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  opacity: 0.035;
+  background-image: url('data:image/svg+xml;utf8,<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"160\" height=\"160\" viewBox=\"0 0 160 160\"><filter id=\"n\"><feTurbulence type=\"fractalNoise\" baseFrequency=\"0.8\" numOctaves=\"2\" stitchTiles=\"stitch\"/></filter><rect width=\"100%\" height=\"100%\" filter=\"url(%23n)\"/></svg>');
 }
 
 @keyframes float {
