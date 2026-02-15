@@ -8,7 +8,7 @@
   --text: #E5E7EB;
   --muted: #9CA3AF;
   --card-bg: rgba(16, 24, 38, 0.72);
-  --card-border: rgba(148, 163, 184, 0.18);
+  --card-border: rgba(91, 107, 255, 0.22);
   --shadow: 0 10px 24px rgba(2, 6, 23, 0.35);
 }
 body.light {
@@ -29,6 +29,10 @@ html, body {
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+*, ::before, ::after {
+  border-color: var(--card-border);
+}
 
 .hero-gradient {
   background: radial-gradient(1200px circle at 0% 0%, rgba(91,107,255,0.18), transparent 40%), radial-gradient(800px circle at 100% 100%, rgba(107,193,255,0.16), transparent 42%);
@@ -151,7 +155,7 @@ html, body {
 .card-hover:hover {
   transform: translateY(-8px);
   box-shadow: 0 24px 48px rgba(2, 6, 23, 0.44);
-  border-color: rgba(255,255,255,0.18);
+  border-color: rgba(91,107,255,0.30);
 }
 
 @keyframes fadeInUp {
