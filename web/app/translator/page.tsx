@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import Link from 'next/link'
 import ExampleChip from '@/components/ExampleChip'
 import DemoShowcase from '@/components/DemoShowcase'
@@ -12,6 +12,13 @@ export default function TranslatorPage() {
   const [tone, setTone] = useState<'Formal' | 'Informal' | 'Professional'>('Formal')
   const [output, setOutput] = useState('')
   const [loading, setLoading] = useState(false)
+  const [copied, setCopied] = useState(false)
+  const maxLen = 400
+  useEffect(() => {
+    if (!copied) return
+    const t = setTimeout(() => setCopied(false), 1200)
+    return () => clearTimeout(t)
+  }, [copied])
 
   const runTranslate = async () => {
     if (!text.trim()) return
@@ -54,13 +61,27 @@ export default function TranslatorPage() {
       <section className="mx-auto max-w-7xl px-6 pt-8 space-y-8">
         <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
           <div className="lg:col-span-2 rounded-2xl border bg-card p-6 shadow-mdx animate-fade-up">
-            <div className="text-lg font-extrabold">Input</div>
+            <div className="flex items-center justify-between">
+              <div className="text-lg font-extrabold">Input</div>
+              <button
+                type="button"
+                onClick={() => setText('')}
+                className="rounded-xl px-3 py-2 text-xs font-semibold border hover:bg-card transition"
+              >
+                Clear
+              </button>
+            </div>
             <textarea
               value={text}
               onChange={(e) => setText(e.target.value)}
               placeholder="Type slang, Hinglish, or casual internet language here…"
-              className="mt-3 w-full h-40 rounded-xl border bg-bg p-4 text-base shadow-inner focus:outline-none focus:ring-2 focus:ring-primary"
+              maxLength={maxLen}
+              className="mt-3 w-full h-48 rounded-xl border bg-bg p-4 text-base shadow-inner focus:outline-none focus:ring-2 focus:ring-primary"
             />
+            <div className="mt-2 flex items-center justify-between text-xs text-text/70">
+              <div>Tip: Try idioms, memes, or Hinglish phrases</div>
+              <div>{text.length}/{maxLen}</div>
+            </div>
             <div className="mt-3 flex flex-wrap gap-2">
               {[
                 "that's no cap, fr fr",
@@ -77,13 +98,20 @@ export default function TranslatorPage() {
             <div className="text-lg font-extrabold">Controls</div>
             <div className="mt-3">
               <label className="text-sm font-semibold text-text/70">Direction</label>
-              <div className="mt-2 grid grid-cols-2 gap-2">
+              <div className="mt-2 grid grid-cols-3 gap-2">
                 <button
                   type="button"
                   onClick={() => setDirection('forward')}
                   className={`rounded-xl px-3 py-2 text-sm font-bold border transition ${direction === 'forward' ? 'bg-primary text-white border-primary' : 'bg-bg text-text border-primary/40 hover:border-primary'}`}
                 >
                   Slang → English
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setDirection(direction === 'forward' ? 'reverse' : 'forward')}
+                  className="rounded-xl px-3 py-2 text-sm font-bold border bg-bg text-text hover:bg-card transition"
+                >
+                  Swap
                 </button>
                 <button
                   type="button"
@@ -131,17 +159,37 @@ export default function TranslatorPage() {
 
         <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
           <div className="lg:col-span-2 rounded-2xl border bg-card p-6 shadow-mdx animate-fade-up">
-            <div className="text-lg font-extrabold">Output</div>
+            <div className="flex items-center justify-between">
+              <div className="text-lg font-extrabold">Output</div>
+              {output && !loading ? (
+                <div className="inline-flex items-center gap-2 rounded-xl border px-3 py-1 text-xs text-text/80">
+                  <span className="inline-flex h-5 w-5 items-center justify-center rounded bg-primary text-white">✓</span>
+                  Translated
+                </div>
+              ) : null}
+            </div>
             <div className="mt-3 rounded-xl border bg-bg p-4 shadow-inner min-h-[160px]">
-              <div className="text-base font-extrabold">{output || '—'}</div>
+              {loading ? (
+                <div className="animate-pulse space-y-2">
+                  <div className="h-4 w-3/4 rounded bg-card" />
+                  <div className="h-4 w-2/3 rounded bg-card" />
+                  <div className="h-4 w-1/2 rounded bg-card" />
+                </div>
+              ) : (
+                <div className="text-base font-extrabold">{output || '—'}</div>
+              )}
             </div>
             <div className="mt-3 flex items-center gap-2">
               <button
                 type="button"
-                onClick={() => navigator.clipboard.writeText(output)}
-                className="rounded-xl border bg-bg px-3 py-2 text-sm font-semibold hover:bg-card transition"
+                onClick={() => {
+                  if (!output) return
+                  navigator.clipboard.writeText(output)
+                  setCopied(true)
+                }}
+                className={`rounded-xl border px-3 py-2 text-sm font-semibold transition ${output ? 'bg-bg hover:bg-card' : 'bg-bg/60 cursor-not-allowed'}`}
               >
-                Copy
+                {copied ? 'Copied!' : 'Copy'}
               </button>
             </div>
           </div>
