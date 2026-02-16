@@ -23,17 +23,18 @@ def local_css():
 
         :root {
             --primary: #6366F1;
-            --primary-glow: rgba(99, 102, 241, 0.4);
+            --primary-glow: rgba(99, 102, 241, 0.25);
             --secondary: #10B981;
-            --bg-dark: #0F172A;
-            --glass-bg: rgba(255, 255, 255, 0.03);
-            --glass-border: rgba(255, 255, 255, 0.1);
-            --text-main: #F8FAFC;
-            --text-muted: #94A3B8;
+            --bg-surface: #FFFFFF;
+            --bg-page: #F8FAFC;
+            --glass-bg: rgba(255, 255, 255, 0.9);
+            --glass-border: #E2E8F0;
+            --text-main: #020617;
+            --text-muted: #475569;
         }
 
         .stApp {
-            background-color: var(--bg-dark);
+            background-color: var(--bg-page);
             color: var(--text-main);
             font-family: 'Inter', sans-serif;
         }
@@ -43,7 +44,6 @@ def local_css():
             font-weight: 800;
         }
 
-        /* Glassmorphism Cards */
         .glass-card {
             background: var(--glass-bg);
             backdrop-filter: blur(12px);
@@ -51,22 +51,25 @@ def local_css():
             border: 1px solid var(--glass-border);
             border-radius: 20px;
             padding: 24px;
-            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+            box-shadow: 0 18px 45px rgba(15, 23, 42, 0.08);
         }
 
-        /* Sidebar Styling */
         [data-testid="stSidebar"] {
-            background-color: rgba(15, 23, 42, 0.95);
-            border-right: 1px solid var(--glass-border);
+            background-color: rgba(255, 255, 255, 0.92);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border-right: 1px solid #E2E8F0;
         }
 
-        /* Input Fields */
         .stTextArea textarea {
-            background: rgba(30, 41, 59, 0.5) !important;
-            color: white !important;
-            border: 1px solid var(--glass-border) !important;
+            background: #FFFFFF !important;
+            color: #020617 !important;
+            border: 1px solid #E2E8F0 !important;
             border-radius: 12px !important;
             font-family: 'Inter', sans-serif !important;
+        }
+        .stTextArea textarea::placeholder {
+            color: #9CA3AF !important;
         }
 
         .stTextArea textarea:focus {
@@ -74,7 +77,6 @@ def local_css():
             box-shadow: 0 0 0 2px var(--primary-glow) !important;
         }
 
-        /* Buttons */
         .stButton>button {
             border-radius: 12px;
             font-weight: 700;
@@ -95,7 +97,6 @@ def local_css():
             box-shadow: 0 8px 25px rgba(99, 102, 241, 0.5);
         }
 
-        /* Metrics Display */
         [data-testid="stMetric"] {
             background: var(--glass-bg);
             border: 1px solid var(--glass-border);
@@ -104,7 +105,6 @@ def local_css():
             text-align: center;
         }
 
-        /* Tabs Styling */
         .stTabs [data-baseweb="tab-list"] {
             gap: 12px;
             background-color: transparent;
@@ -123,7 +123,6 @@ def local_css():
             border-bottom: 2px solid var(--primary) !important;
         }
 
-        /* Animations */
         @keyframes fadeIn {
             from { opacity: 0; transform: translateY(10px); }
             to { opacity: 1; transform: translateY(0); }
@@ -133,19 +132,45 @@ def local_css():
             animation: fadeIn 0.8s ease-out forwards;
         }
 
-        /* Custom Scrollbar */
         ::-webkit-scrollbar {
             width: 8px;
         }
         ::-webkit-scrollbar-track {
-            background: var(--bg-dark);
+            background: transparent;
         }
         ::-webkit-scrollbar-thumb {
-            background: #334155;
+            background: #CBD5E1;
             border-radius: 10px;
         }
         ::-webkit-scrollbar-thumb:hover {
-            background: #475569;
+            background: #94A3B8;
+        }
+
+        .output-box {
+            background: #FFFFFF;
+            border-radius: 12px;
+            border: 1px solid #E2E8F0;
+            padding: 16px 18px;
+            font-size: 1rem;
+            color: var(--text-main);
+            line-height: 1.6;
+        }
+
+        .copy-btn {
+            border-radius: 999px;
+            padding: 6px 14px;
+            border: 1px solid #E2E8F0;
+            background: #F9FAFB;
+            font-size: 0.75rem;
+            font-weight: 600;
+            color: #0F172A;
+            cursor: pointer;
+            transition: background 0.2s ease, transform 0.2s ease, box-shadow 0.2s ease;
+        }
+        .copy-btn:hover {
+            background: #EEF2FF;
+            box-shadow: 0 4px 10px rgba(99, 102, 241, 0.18);
+            transform: translateY(-1px);
         }
         </style>
     """, unsafe_allow_html=True)
@@ -379,20 +404,39 @@ def render_translation_ui(language, direction, model_path, model_id, use_prefix,
     with col2:
         st.markdown("<div class='glass-card animate-fade-in' style='transition-delay: 0.1s;'>", unsafe_allow_html=True)
         st.markdown("### 📤 Translation")
-        
         output_placeholder = st.empty()
-        
         if translate_btn and source_text:
             with st.spinner("Decoding slang..."):
                 src = source_text
                 if use_prefix:
                     src = f"{build_prefix(language, direction, style)} {src}".strip()
                 translated = translate_text(src, model, tokenizer)
-                output_placeholder.code(translated, language=None)
-                st.toast("Translation successful!", icon="✨")
+                safe_key = key_base.replace(" ", "_").lower()
+                output_placeholder.markdown(
+                    f"""
+                    <div id="{safe_key}_output" class="output-box">{translated}</div>
+                    <div style="margin-top:8px; display:flex; justify-content:flex-end;">
+                        <button class="copy-btn" id="{safe_key}_copy">Copy translation</button>
+                    </div>
+                    <script>
+                    const btn_{safe_key} = document.getElementById("{safe_key}_copy");
+                    const out_{safe_key} = document.getElementById("{safe_key}_output");
+                    if (btn_{safe_key} && out_{safe_key}) {{
+                        btn_{safe_key}.onclick = async () => {{
+                            try {{
+                                await navigator.clipboard.writeText(out_{safe_key}.innerText);
+                                btn_{safe_key}.innerText = "Copied";
+                                setTimeout(() => (btn_{safe_key}.innerText = "Copy translation"), 1600);
+                            }} catch (e) {{}}
+                        }};
+                    }}
+                    </script>
+                    """,
+                    unsafe_allow_html=True,
+                )
+                st.toast("Translation copied-ready ✨", icon="✨")
         else:
             output_placeholder.info("Translation will appear here after clicking 'Translate'")
-        
         st.markdown("</div>", unsafe_allow_html=True)
 
 def render_home():
@@ -462,8 +506,6 @@ def main():
     if not st.session_state.get("show_translator", False):
         render_home()
         return
-    # Sidebar: Modern Config Panel (card-based layout for clarity and hierarchy)
-    # Sidebar: Modern Config Panel
     st.sidebar.markdown(f"""
         <div class="glass-card" style="margin-bottom: 24px;">
             <h2 style="margin:0; color:var(--text-main); font-size:1.5rem;">🛠️ Settings</h2>
@@ -486,19 +528,22 @@ def main():
         value=APPLY_TASK_PREFIX,
     )
 
-    # 2. Metrics Dashboard in Sidebar
-    st.sidebar.markdown("<br>", unsafe_allow_html=True)
-    st.sidebar.markdown("<h2 style='font-size:1.2rem; margin-bottom:12px;'>📊 Performance</h2>", unsafe_allow_html=True)
-    
-    metrics = load_metrics()
-    f_bleu, r_bleu = pick_bleu_scores(metrics.get("bleu", {}))
-    emoji_avg, slang_avg = summarize_style(metrics.get("style", {}))
-    
-    m_col1, m_col2 = st.sidebar.columns(2)
-    with m_col1:
-        st.metric("Forward BLEU", f"{f_bleu:.1f}" if f_bleu else "N/A")
-    with m_col2:
-        st.metric("Reverse BLEU", f"{r_bleu:.1f}" if r_bleu else "N/A")
+    show_metrics = st.sidebar.toggle(
+        "Show developer metrics",
+        value=False,
+        help="Enable BLEU and style metrics for model evaluation.",
+    )
+    if show_metrics:
+        st.sidebar.markdown("<br>", unsafe_allow_html=True)
+        st.sidebar.markdown("<h2 style='font-size:1.2rem; margin-bottom:12px;'>📊 Performance</h2>", unsafe_allow_html=True)
+        metrics = load_metrics()
+        f_bleu, r_bleu = pick_bleu_scores(metrics.get("bleu", {}))
+        emoji_avg, slang_avg = summarize_style(metrics.get("style", {}))
+        m_col1, m_col2 = st.sidebar.columns(2)
+        with m_col1:
+            st.metric("Forward BLEU", f"{f_bleu:.1f}" if f_bleu else "N/A")
+        with m_col2:
+            st.metric("Reverse BLEU", f"{r_bleu:.1f}" if r_bleu else "N/A")
 
     # Main Content Area
     st.markdown(
