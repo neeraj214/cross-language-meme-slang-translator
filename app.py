@@ -440,6 +440,17 @@ def render_translation_ui(language, direction, model_path, model_id, use_prefix,
         st.markdown("</div>", unsafe_allow_html=True)
 
 def render_home():
+    st.sidebar.markdown(
+        """
+        <div class="glass-card" style="margin-bottom: 24px;">
+            <h2 style="margin:0; font-size:1.4rem; color:var(--text-main);">Home</h2>
+            <p style="margin-top:8px; font-size:0.9rem; color:var(--text-muted);">
+                Start on the overview, then jump into the Translator when you are ready.
+            </p>
+        </div>
+        """,
+        unsafe_allow_html=True,
+    )
     st.markdown("""
         <div class="animate-fade-in" style="text-align: center; padding: 40px 20px;">
             <div style="display: inline-block; padding: 8px 16px; border-radius: 99px; background: rgba(99, 102, 241, 0.1); border: 1px solid rgba(99, 102, 241, 0.2); color: #818CF8; font-weight: 700; font-size: 0.85rem; margin-bottom: 24px; letter-spacing: 1px; text-transform: uppercase;">
