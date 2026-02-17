@@ -66,7 +66,7 @@ export default function TranslatorInput({ onTranslate }: Props) {
         type="button"
         disabled={disabled || loading}
         onClick={run}
-        className={`mt-4 w-full rounded-xl px-4 py-3 text-base font-extrabold transition shadow-md focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 ${disabled || loading ? 'bg-primary/50 text-white cursor-not-allowed' : 'btn-cta bg-gradient-to-r from-[var(--primary)] to-[var(--secondary)] text-white hover:shadow-lg'}`}
+        className={`mt-4 w-full rounded-xl px-4 py-3 text-base font-extrabold transition shadow-md focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 ${disabled || loading ? 'bg-primary/50 text-white cursor-not-allowed' : 'btn-cta bg-gradient-to-r from-[var(--primary)] to-[var(--secondary)] text-black hover:shadow-lg'}`}
       >
         {loading ? 'Translating…' : 'Try Translation'}
       </button>
