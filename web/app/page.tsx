@@ -4,11 +4,31 @@ import TrustBadge from '@/components/TrustBadge'
 import FeatureCard from '@/components/FeatureCard'
 import HeroIllustration from '@/components/HeroIllustration'
 import Testimonials from '@/components/Testimonials'
+import TranslatorInput from '@/components/TranslatorInput'
 import { useEffect, useRef, useState } from 'react'
+
+type Direction = 'forward' | 'reverse'
 
 export default function Page() {
   const heroRef = useRef<HTMLDivElement | null>(null)
   const [mounted, setMounted] = useState(false)
+  const [demoOutput, setDemoOutput] = useState('')
+  const handleDemoTranslate = async (text: string, dir: Direction) => {
+    if (!text.trim()) return
+    setDemoOutput('Translating…')
+    try {
+      const res = await fetch('/api/translate', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ text, direction: dir }),
+      })
+      const data = await res.json()
+      const out = typeof data?.output === 'string' ? data.output : ''
+      setDemoOutput(out || 'No translation returned.')
+    } catch {
+      setDemoOutput('Translation failed.')
+    }
+  }
   useEffect(() => {
     setMounted(true)
     const handleMouse = (e: MouseEvent) => {
@@ -127,9 +147,12 @@ export default function Page() {
         <section id="demo" className="mt-12 rounded-2xl border bg-card p-8 shadow-mdx reveal">
           <div className="text-lg font-extrabold">Live Demo</div>
           <div className="mt-3 grid grid-cols-1 gap-4 md:grid-cols-2">
-            <textarea className="rounded-xl border bg-bg p-4" placeholder="Type slang or Hinglish here..." rows={4} />
-            <div className="rounded-xl border bg-bg p-4 shadow-inner">
-              <HeroIllustration />
+            <TranslatorInput onTranslate={handleDemoTranslate} />
+            <div className="rounded-xl border bg-bg p-4 shadow-inner flex flex-col">
+              <div className="text-sm font-semibold text-text/70">AI Translation</div>
+              <div className="mt-2 flex-1 rounded-xl bg-card px-4 py-3 text-base text-text">
+                {demoOutput || 'Translation will appear here after you click Try Translation.'}
+              </div>
             </div>
           </div>
           <div className="mt-4 flex items-center gap-3">
