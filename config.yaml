@@ -1,0 +1,23 @@
+model:
+  name: google/flan-t5-small
+  max_source_length: 128
+  max_target_length: 128
+
+training:
+  batch_size: 16
+  learning_rate: 3e-5
+  epochs: 6
+  weight_decay: 0.01
+  warmup_ratio: 0.1
+  gradient_accumulation_steps: 2
+  seed: 42
+  label_smoothing: 0.1
+  fp16: true
+
+generation:
+  num_beams: 6
+  no_repeat_ngram_size: 2
+  length_penalty: 1.0
+  temperature: 0.9
+  top_p: 0.95
+  repetition_penalty: 1.1
