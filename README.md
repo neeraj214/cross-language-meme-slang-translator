@@ -1,7 +1,9 @@
 # Cross-Language Meme & Slang Translator
 
 ![Python](https://img.shields.io/badge/Python-3.11-blue?logo=python&logoColor=white)
-![Framework](https://img.shields.io/badge/Framework-Streamlit-red?logo=streamlit&logoColor=white)
+![Framework](https://img.shields.io/badge/Framework-FastAPI-009688?logo=fastapi&logoColor=white)
+![Transformers](https://img.shields.io/badge/Library-Transformers-FF9D00?logo=huggingface&logoColor=white)
+![Framework](https://img.shields.io/badge/UI-Streamlit-red?logo=streamlit&logoColor=white)
 ![Model](https://img.shields.io/badge/Model-FLAN--T5-orange?logo=huggingface&logoColor=white)
 ![Docker](https://img.shields.io/badge/Docker-Ready-blue?logo=docker&logoColor=white)
 ![Status](https://img.shields.io/badge/Status-Active-success)
@@ -13,151 +15,135 @@
 
 ---
 
-## 📌 Project Overview
+## 📌 Overview
 
 **Cross-Language Meme & Slang Translator** is a specialized Natural Language Processing (NLP) application designed to bridge the communication gap between informal internet slang/meme culture and standard English. 
 
-Traditional translators (like Google Translate) often fail to capture the nuance of internet slang or code-mixed languages like **Hinglish**. This project utilizes fine-tuned **T5 (Text-to-Text Transfer Transformer)** models to perform accurate, bidirectional translation.
+Traditional translators often fail to capture the nuance of internet slang or code-mixed languages like **Hinglish**. This project utilizes fine-tuned **T5 (Text-to-Text Transfer Transformer)** models to perform accurate, bidirectional translation, catering to the evolving digital language landscape.
 
-### ✨ Key Features
+## ❓ Problem Statement
 
-*   **🔄 Bidirectional Translation:**
-    *   **Forward:** Internet Slang / Memes / Hinglish ➡️ Standard English
-    *   **Reverse:** Standard English ➡️ Slang / Meme-style text
-*   **🇮🇳 Hinglish Support:** specialized normalization pipeline for handling code-mixed Hindi-English text (e.g., *"kya scene hai bro"*).
-*   **🖥️ Interactive UI:** A modern, responsive web interface built with **Streamlit**, featuring custom styling, dark/light mode support, and an intuitive split-view layout.
-*   **🧠 Advanced Training:** Uses **Curriculum Learning** strategies to stabilize training on noisy datasets.
-*   **🐳 Deployment Ready:** Fully Dockerized for easy deployment to cloud platforms like Render, Azure, or AWS.
+Internet communication is increasingly dominated by:
+- **Gen-Z Slang**: "no cap", "fr fr", "rizz", etc.
+- **Hinglish**: Code-mixed Hindi and English (e.g., "bhai kya scene hai").
+- **Meme Culture**: Context-dependent phrases that lose meaning in literal translation.
 
----
+Standard NMT (Neural Machine Translation) systems are trained on formal corpora (news, legal documents) and struggle with these informal, noisy, and rapidly changing linguistic patterns. This project addresses this gap by providing a specialized translation layer.
 
-## 🛠️ Tech Stack
+## 📊 Dataset
 
-| Component | Technology |
-| :--- | :--- |
-| **Language** | Python 3.11 |
-| **Deep Learning** | PyTorch, Hugging Face Transformers |
-| **Model** | Google FLAN-T5 (Fine-tuned) |
-| **Web Framework** | Streamlit |
-| **Data Processing** | Pandas, NumPy, Regex |
-| **Evaluation** | SacreBLEU (Multi-reference) |
-| **Containerization** | Docker |
+The project leverages a custom-curated dataset focused on informal communication:
+- **Size**: ~1,000+ high-quality parallel sentence pairs.
+- **Sources**: Custom-collected slang mappings, Hinglish datasets, and social media data.
+- **Content**: Slang/Meme phrases paired with their standard English equivalents.
+- **Processing**: Includes a specialized normalization pipeline for Hinglish and slang consistency.
 
----
+## 🧠 Model Architecture
 
-## 🔗 Live App
+The system is built upon **Google's FLAN-T5-small**, a text-to-text transformer model.
+- **Fine-tuning**: Bidirectional fine-tuning (Slang ↔ Standard English).
+- **Prefix-based Tasks**: Uses task-specific prefixes like `translate english slang to english:` to guide the generation process.
+- **Inference**: Optimized using Beam Search (num_beams=6) for better translation quality.
 
-Streamlit Cloud: https://cross-language-meme-slang-translator-ntuaeasfjtwmonwyttnbtj.streamlit.app/
+## 🚀 Training Pipeline
 
-If you see a “no response” message briefly, wait a moment and refresh; initial cold start may download model weights.
+Our training strategy focuses on robustness and quality:
+- **Curriculum Learning**: Training starts with "easy" (shorter) samples before progressing to complex, noisy sentences.
+- **Hyperparameters**: Centralized configuration via `config.yaml` (Batch Size: 16, LR: 3e-5, Epochs: 6).
+- **Optimization**: AdamW optimizer with weight decay and label smoothing (0.1) for better generalization.
 
----
+## 📈 Evaluation Metrics
 
-## 🚀 Getting Started
-
-### Prerequisites
-
-*   Python 3.8+
-*   Git
-
-### Installation
-
-1.  **Clone the repository:**
-    ```bash
-    git clone https://github.com/neeraj214/cross-language-meme-slang-translator.git
-    cd cross-language-meme-slang-translator
-    ```
-
-2.  **Install dependencies:**
-    ```bash
-    pip install -r requirements.txt
-    ```
-
-3.  **Run the application:**
-    ```bash
-    streamlit run app.py
-    ```
-    The app will open in your browser at `http://localhost:8501`.
-
----
-
-## ⚙️ Configuration
-
-Environment variables can point to hosted model IDs:
-- FORWARD_MODEL_ID
-- REVERSE_MODEL_ID
-- HINGLISH_FORWARD_MODEL_ID
-- HINGLISH_REVERSE_MODEL_ID
-
-Local directories are used when present; otherwise the app falls back to a base T5 model.
-
-On Streamlit Cloud, set these in “Secrets” or environment settings for reliable loading.
-
----
-
-## 🐳 Docker Usage
-
-To run the application in an isolated container:
-
-1.  **Build the image:**
-    ```bash
-    docker build -t slang-translator .
-    ```
-
-2.  **Run the container:**
-    ```bash
-    docker run -p 8501:8501 slang-translator
-    ```
-
----
-
-## 📊 Model Performance
-
-We evaluated the model using **SacreBLEU** on the current test sets, accounting for the diversity of valid slang translations.
+We employ a multi-metric evaluation strategy to capture different aspects of translation quality:
+- **BLEU / SacreBLEU**: Measures n-gram overlap with reference translations.
+- **ChrF**: Character n-gram F-score, useful for morphologically rich or noisy text.
+- **BERTScore**: Captures semantic similarity using contextual embeddings.
+- **Style Metrics**: Tracking slang and emoji density to ensure stylistic consistency in reverse translation.
 
 | Metric | Score | Notes |
 | :--- | :--- | :--- |
-| **Forward BLEU** | **16.52** | Slang/Hinglish → Standard English |
-| **Reverse BLEU** | **30.21** | Standard English → Slang (High diversity) |
+| **Forward BLEU** | **~20.56** | Slang/Hinglish → Standard English |
+| **Reverse BLEU** | **~9.65** | Standard English → Slang (Higher diversity) |
 
-**Training Strategy:**
-*   **Curriculum Learning:** The model was first trained on "easy" (short) samples before moving to complex, noisy sentences.
-*   **Multi-Reference Evaluation:** Validated against multiple acceptable translations for fairness (where available).
-*   **Style Metrics (Summary):** Forward outputs show low emoji/slang presence (as expected); reverse outputs show higher slang presence by design.
+## 🌐 API Deployment (FastAPI)
 
----
+For production-grade use, the project includes a **FastAPI** backend:
+- **Endpoint**: `/translate` (POST)
+- **Schema**:
+  ```json
+  {
+    "text": "that fit is fire",
+    "direction": "forward"
+  }
+  ```
+- **Features**: Async processing, health checks, and Pydantic validation.
 
-## �📂 Project Structure
+## ✨ Example Results
+
+| Input (Slang/Hinglish) | Output (Standard English) |
+| :--- | :--- |
+| "no cap, he's the goat" | "honestly, he is the greatest of all time" |
+| "bhai kya entry maari 🔥" | "what an entry, bro!" |
+| "bro’s cooked 💀" | "he messed up badly" |
+
+## ⚠️ Limitations
+
+- **Slang Evolution**: Internet slang changes rapidly; the model requires periodic retraining.
+- **Context Sensitivity**: Some memes require deep cultural context that a small model may miss.
+- **Noisy Inputs**: Highly unstructured or misspelled text can lead to hallucinated translations.
+
+## 🔮 Future Improvements
+
+- **Larger Models**: Moving to FLAN-T5-base or Large for better nuance.
+- **Real-time Updates**: Integration with social media APIs to capture emerging slang.
+- **Multi-modal Support**: Translating text within meme images.
+
+## 🚀 Installation & Usage
+
+### Prerequisites
+- Python 3.11+
+- Git
+
+### Steps
+1. **Clone the repository**:
+   ```bash
+   git clone https://github.com/neeraj214/cross-language-meme-slang-translator.git
+   cd cross-language-meme-slang-translator
+   ```
+2. **Install dependencies**:
+   ```bash
+   pip install -r requirements.txt
+   ```
+3. **Run Streamlit UI**:
+   ```bash
+   streamlit run app.py
+   ```
+4. **Run FastAPI Backend**:
+   ```bash
+   uvicorn backend.main:app --reload
+   ```
+
+## 📂 Folder Structure
 
 ```bash
 cross-language-meme-slang-translator/
-├── app.py                   # 📱 Main Streamlit Application
-├── dataset/                 # 💾 Raw and processed datasets
-│   ├── slang_emoji_dict.py  # Dictionary for emoji/slang mapping
-│   └── ...
-├── scripts/                 # ⚙️ Helper scripts
-│   ├── t5_training_forward.py   # Training pipeline
-│   ├── preprocess_slang.py      # Data cleaning & normalization
-│   └── evaluate_bleu.py         # Metric calculation
-├── results/                 # 📈 Evaluation logs and metrics
-├── Dockerfile               # 🐳 Docker configuration
-├── requirements.txt         # 📦 Dependencies
-└── README.md                # 📄 Documentation
+├── backend/                # 🌐 FastAPI production backend
+├── training/               # 🚀 Training scripts and pipeline
+├── evaluation/             # 📈 Evaluation scripts and metrics
+├── data/                   # 💾 Raw and processed datasets
+├── models/                 # 🧠 Saved model checkpoints
+├── config/                 # ⚙️ YAML configuration files
+├── docs/                   # 📄 Documentation and diagrams
+├── results/                # 📊 Evaluation logs
+├── app.py                  # 📱 Streamlit Application
+├── config.yaml             # 🛠️ Centralized configuration
+├── Dockerfile              # 🐳 Containerization
+└── requirements.txt        # 📦 Dependencies
 ```
-
----
 
 ## 🤝 Contributing
 
-Contributions are welcome! Please follow these steps:
-
-1.  Fork the repository.
-2.  Create a new branch (`git checkout -b feature/YourFeature`).
-3.  Commit your changes (`git commit -m 'Add some feature'`).
-4.  Push to the branch (`git push origin feature/YourFeature`).
-5.  Open a Pull Request.
-
----
+Contributions are welcome! Please fork the repository and open a Pull Request.
 
 ## 📜 License
 
@@ -165,5 +151,5 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 ---
 <div align="center">
-  <sub>Built with ❤️ by <a href="https://github.com/neeraj214">Neeraj Negi</a> as part of the MCA Curriculum.</sub>
+  <sub>Built with ❤️ by <a href="https://github.com/neeraj214">Neeraj Negi</a></sub>
 </div>
