@@ -6,6 +6,7 @@ import csv
 import json
 import glob
 import random
+from backend.config_loader import load_config
 
 # Set page configuration
 st.set_page_config(
@@ -178,6 +179,15 @@ def local_css():
 local_css()
 
 # --- Configuration & Constants ---
+CONFIG = {}
+try:
+    CONFIG = load_config("config.yaml")
+except Exception:
+    pass
+
+MODEL_CONFIG = CONFIG.get("model", {})
+GEN_CONFIG = CONFIG.get("generation", {})
+
 FORWARD_MODEL_PATH = os.environ.get("FORWARD_MODEL", "outputs/checkpoints/t5-small-forward-ep5-lr3e4-64")
 REVERSE_MODEL_PATH = os.environ.get("REVERSE_MODEL", "outputs/checkpoints/t5-small-reverse-ep5-lr3e4-64")
 HINGLISH_FORWARD_MODEL_PATH = os.environ.get("HINGLISH_FORWARD_MODEL", "outputs/checkpoints/t5-small-hinglish-forward-ep10-lr0.0002-64")
@@ -192,9 +202,10 @@ try:
         HF_TOKEN = st.secrets.get("HF_TOKEN", None)
 except Exception:
     HF_TOKEN = HF_TOKEN
-FALLBACK_MODEL = os.environ.get("FALLBACK_MODEL", "t5-small")
-MAX_SOURCE_LEN = 128
-MAX_TARGET_LEN = 64
+
+FALLBACK_MODEL = os.environ.get("FALLBACK_MODEL", MODEL_CONFIG.get("name", "t5-small"))
+MAX_SOURCE_LEN = MODEL_CONFIG.get("max_source_length", 128)
+MAX_TARGET_LEN = MODEL_CONFIG.get("max_target_length", 128)
 APPLY_TASK_PREFIX = False 
 
 # --- Helper Functions ---
@@ -339,11 +350,14 @@ def translate_text(text, model, tokenizer, max_source_len=MAX_SOURCE_LEN, max_ta
         outputs = model.generate(
             input_ids,
             max_length=max_target_len,
-            num_beams=6,
-            no_repeat_ngram_size=3,
-            length_penalty=1.0,
+            num_beams=GEN_CONFIG.get("num_beams", 6),
+            no_repeat_ngram_size=GEN_CONFIG.get("no_repeat_ngram_size", 3),
+            length_penalty=GEN_CONFIG.get("length_penalty", 1.0),
             early_stopping=True,
-            do_sample=False
+            do_sample=False,
+            temperature=GEN_CONFIG.get("temperature", 0.9),
+            top_p=GEN_CONFIG.get("top_p", 0.95),
+            repetition_penalty=GEN_CONFIG.get("repetition_penalty", 1.1)
         )
     translated_text = tokenizer.decode(outputs[0], skip_special_tokens=True)
     return translated_text
@@ -384,6 +398,10 @@ def render_translation_ui(language, direction, model_path, model_id, use_prefix,
         key_base = f"{language}_{direction}"
         input_key = f"{key_base}_input"
         
+        # Callback to set example text without modifying state after widget creation
+        def set_example():
+            st.session_state[input_key] = example_text
+
         source_text = st.text_area(
             label="Translate from:",
             height=200,
@@ -393,9 +411,7 @@ def render_translation_ui(language, direction, model_path, model_id, use_prefix,
         
         ic1, ic2 = st.columns([1, 1])
         with ic1:
-            if st.button("🎲 Random Example", key=f"{key_base}_ex_btn", help="Load sample text"):
-                st.session_state[input_key] = example_text
-                st.rerun()
+            st.button("🎲 Random Example", key=f"{key_base}_ex_btn", help="Load sample text", on_click=set_example)
         with ic2:
             translate_btn = st.button("⚡ Translate", key=f"{key_base}_run", type="primary", use_container_width=True)
             
