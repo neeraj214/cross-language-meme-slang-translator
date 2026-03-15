@@ -100,6 +100,13 @@ For production-grade use, the project includes a **FastAPI** backend:
 
 ## 🚀 Installation & Usage
 
+### Quick Start (Streamlit)
+
+```bash
+cd cross-language-meme-slang-translator
+streamlit run app.py
+```
+
 ### Prerequisites
 - Python 3.11+
 - Git
